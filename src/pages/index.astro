@@ -66,8 +66,16 @@ const description =
         --glass: rgba(255, 255, 255, 0.06);
         --ring: rgba(124, 58, 237, 0.35);
 
-        --nav-glass-bg: linear-gradient(180deg, rgba(17,22,42,.78), rgba(17,22,42,.58));
-        --nav-border-grad: linear-gradient(180deg, rgba(255,255,255,.18), rgba(255,255,255,.08));
+        --nav-glass-bg: linear-gradient(
+          180deg,
+          rgba(17, 22, 42, 0.78),
+          rgba(17, 22, 42, 0.58)
+        );
+        --nav-border-grad: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.18),
+          rgba(255, 255, 255, 0.08)
+        );
       }
       * {
         box-sizing: border-box;
@@ -174,6 +182,126 @@ const description =
       .nav-links {
         display: flex;
         gap: 18px;
+      }
+      .nav-inner {
+        position: relative;
+      } /* para posicionar el dropdown */
+      .nav-links {
+        display: flex;
+        gap: 18px;
+      } /* desktop visible */
+      .nav-toggle {
+        display: none; /* oculto en desktop */
+        background: transparent;
+        border: 0;
+        padding: 8px 10px;
+        cursor: pointer;
+        border-radius: 10px;
+      }
+      .nav-toggle .hamb-line {
+        position: relative;
+        display: block;
+        width: 22px;
+        height: 2px;
+        background: #fff;
+      }
+      .nav-toggle .hamb-line::before,
+      .nav-toggle .hamb-line::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        width: 22px;
+        height: 2px;
+        background: #fff;
+        transition:
+          transform 0.25s ease,
+          opacity 0.2s ease,
+          top 0.25s ease;
+      }
+      .nav-toggle .hamb-line::before {
+        top: -6px;
+      }
+      .nav-toggle .hamb-line::after {
+        top: 6px;
+      }
+      .nav.is-open .nav-toggle .hamb-line {
+        background: transparent;
+      }
+      .nav.is-open .nav-toggle .hamb-line::before {
+        top: 0;
+        transform: rotate(45deg);
+      }
+      .nav.is-open .nav-toggle .hamb-line::after {
+        top: 0;
+        transform: rotate(-45deg);
+      }
+
+      /* scrim detrás del menú móvil */
+      .nav-scrim {
+        position: fixed;
+        inset: 0;
+        background: rgba(7, 11, 24, 0.55);
+        backdrop-filter: blur(2px);
+        z-index: 40; /* debajo de .nav (50) */
+      }
+
+      /* --- Mobile (<=768px) --- */
+      @media (max-width: 768px) {
+        .nav-toggle {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+        }
+        /* oculta links por defecto y los hace dropdown */
+        .nav-links {
+          display: none;
+          position: absolute;
+          top: 100%;
+          left: 0;
+          right: 0;
+          margin-top: 8px;
+          padding: 12px;
+          border-radius: 14px;
+          background: rgba(
+            17,
+            22,
+            42,
+            0.92
+          ); /* más opaco para que no se mezcle */
+          border: 1px solid rgba(255, 255, 255, 0.12);
+          box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+          flex-direction: column;
+          gap: 10px;
+          transform-origin: top center;
+          animation: menuHide 0.2s ease forwards;
+          max-height: calc(100vh - 120px);
+          overflow-y: auto;
+        }
+        .nav.is-open .nav-links {
+          display: flex;
+          animation: menuShow 0.18s ease forwards;
+        }
+
+        @keyframes menuShow {
+          from {
+            opacity: 0;
+            transform: scaleY(0.96);
+          }
+          to {
+            opacity: 1;
+            transform: scaleY(1);
+          }
+        }
+        @keyframes menuHide {
+          from {
+            opacity: 1;
+            transform: scaleY(1);
+          }
+          to {
+            opacity: 0;
+            transform: scaleY(0.96);
+          }
+        }
       }
 
       /* Logo (animaciones del SVG) */
@@ -505,22 +633,21 @@ const description =
           >
             <defs>
               <linearGradient id="lg" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0" stop-color="#06b6d4"></stop><stop
-                  offset="1"
-                  stop-color="#7c3aed"></stop>
+                <stop offset="0" stop-color="#06b6d4"></stop>
+                <stop offset="1" stop-color="#7c3aed"></stop>
               </linearGradient>
               <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
                 <feGaussianBlur stdDeviation="1.5" result="b"></feGaussianBlur>
-                <feMerge
-                  ><feMergeNode in="b"></feMergeNode><feMergeNode
-                    in="SourceGraphic"></feMergeNode></feMerge
-                >
+                <feMerge>
+                  <feMergeNode in="b"></feMergeNode>
+                  <feMergeNode in="SourceGraphic"></feMergeNode>
+                </feMerge>
               </filter>
             </defs>
             <g filter="url(#glow)">
               <circle cx="42" cy="42" r="7" fill="url(#lg)"></circle>
-              <g class="orbit"
-                ><ellipse
+              <g class="orbit">
+                <ellipse
                   cx="42"
                   cy="42"
                   rx="24"
@@ -528,10 +655,10 @@ const description =
                   stroke="url(#lg)"
                   stroke-width="2.5"
                   opacity=".75"
-                  fill="none"></ellipse></g
-              >
-              <g class="orbit2"
-                ><ellipse
+                  fill="none"></ellipse>
+              </g>
+              <g class="orbit2">
+                <ellipse
                   cx="42"
                   cy="42"
                   rx="10"
@@ -539,10 +666,10 @@ const description =
                   stroke="url(#lg)"
                   stroke-width="2.5"
                   opacity=".75"
-                  fill="none"></ellipse></g
-              >
-              <g class="orbit3"
-                ><ellipse
+                  fill="none"></ellipse>
+              </g>
+              <g class="orbit3">
+                <ellipse
                   cx="42"
                   cy="42"
                   rx="18"
@@ -551,8 +678,8 @@ const description =
                   stroke-width="2.5"
                   opacity=".75"
                   fill="none"
-                  transform="rotate(45 42 42)"></ellipse></g
-              >
+                  transform="rotate(45 42 42)"></ellipse>
+              </g>
               <circle
                 class="electron"
                 cx="66"
@@ -564,13 +691,30 @@ const description =
           </svg>
           <span>Solverive</span>
         </div>
-        <div class="nav-links">
-          <a href="#services">Services</a><a href="#benefits">Benefits</a><a
-            href="#testimonials">Testimonials</a
-          ><a href="#contact">Contact</a>
+
+        <!-- Botón hamburguesa (oculto en desktop por CSS) -->
+        <button
+          class="nav-toggle"
+          id="navToggle"
+          aria-label="Open menu"
+          aria-expanded="false"
+          aria-controls="primary-links"
+        >
+          <span class="hamb-line"></span>
+        </button>
+
+        <!-- Links con ID para JS -->
+        <div class="nav-links" id="primary-links">
+          <a href="#services">Services</a>
+          <a href="#benefits">Benefits</a>
+          <a href="#testimonials">Testimonials</a>
+          <a href="#contact">Contact</a>
         </div>
       </div>
     </nav>
+
+    <!-- Scrim que oscurece/captura clics del fondo al abrir el menú mobile -->
+    <div id="navScrim" class="nav-scrim" hidden></div>
 
     <main id="main">
       <!-- Hero -->
@@ -810,6 +954,54 @@ const description =
     </script>
 
     <script is:inline>
+      (function () {
+        const nav = document.querySelector(".nav");
+        const toggle = document.getElementById("navToggle");
+        const linksBox = document.getElementById("primary-links");
+        if (!nav || !toggle || !linksBox) return;
+
+        const mq = window.matchMedia("(max-width: 768px)");
+
+        function openMenu() {
+          if (!mq.matches) return; // <-- sólo en mobile
+          nav.classList.add("is-open");
+          toggle.setAttribute("aria-expanded", "true");
+          const firstLink = linksBox.querySelector("a");
+          firstLink && firstLink.focus({ preventScroll: true });
+          document.addEventListener("keydown", escToClose);
+          document.addEventListener("click", clickOutside, { capture: true });
+        }
+        function closeMenu() {
+          nav.classList.remove("is-open");
+          toggle.setAttribute("aria-expanded", "false");
+          document.removeEventListener("keydown", escToClose);
+          document.removeEventListener("click", clickOutside, {
+            capture: true,
+          });
+        }
+        function escToClose(e) {
+          if (e.key === "Escape") closeMenu();
+        }
+        function clickOutside(e) {
+          if (!nav.contains(e.target)) closeMenu();
+        }
+
+        toggle.addEventListener("click", () => {
+          if (!mq.matches) return; // <-- ignora clicks en desktop
+          nav.classList.contains("is-open") ? closeMenu() : openMenu();
+        });
+
+        linksBox.addEventListener("click", (e) => {
+          if (mq.matches && e.target.closest("a")) closeMenu();
+        });
+
+        // Si se pasa a desktop, asegúrate de cerrar
+        function syncMode() {
+          if (!mq.matches) closeMenu();
+        }
+        mq.addEventListener?.("change", syncMode);
+        window.addEventListener("resize", syncMode);
+      })();
       // Year
       document.getElementById("year").textContent = new Date().getFullYear();
 
@@ -1069,7 +1261,6 @@ const description =
         requestAnimationFrame(loop);
       })();
 
-   
       // Recordatorio: en Cloudflare → SSL/TLS: "Always Use HTTPS" y modo "Full".
     </script>
   </body>

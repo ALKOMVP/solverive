@@ -158,7 +158,7 @@ var onRequestPost2 = /* @__PURE__ */ __name(async ({ request, env }) => {
   return Response.json({ indexed: points.length });
 }, "onRequestPost");
 
-// ../.wrangler/tmp/pages-0arvWy/functionsRoutes-0.25904599591930744.mjs
+// ../.wrangler/tmp/pages-Y6h4Kp/functionsRoutes-0.41848245386703153.mjs
 var routes = [
   {
     routePath: "/chat",
@@ -663,7 +663,7 @@ var jsonError = /* @__PURE__ */ __name(async (request, env, _ctx, middlewareCtx)
 }, "jsonError");
 var middleware_miniflare3_json_error_default = jsonError;
 
-// ../.wrangler/tmp/bundle-sGw7ZZ/middleware-insertion-facade.js
+// ../.wrangler/tmp/bundle-CO5b4c/middleware-insertion-facade.js
 var __INTERNAL_WRANGLER_MIDDLEWARE__ = [
   middleware_ensure_req_body_drained_default,
   middleware_miniflare3_json_error_default
@@ -695,7 +695,7 @@ function __facade_invoke__(request, env, ctx, dispatch, finalMiddleware) {
 }
 __name(__facade_invoke__, "__facade_invoke__");
 
-// ../.wrangler/tmp/bundle-sGw7ZZ/middleware-loader.entry.ts
+// ../.wrangler/tmp/bundle-CO5b4c/middleware-loader.entry.ts
 var __Facade_ScheduledController__ = class ___Facade_ScheduledController__ {
   constructor(scheduledTime, cron, noRetry) {
     this.scheduledTime = scheduledTime;
@@ -795,4 +795,4 @@ export {
   __INTERNAL_WRANGLER_MIDDLEWARE__,
   middleware_loader_entry_default as default
 };
-//# sourceMappingURL=functionsWorker-0.4246007596540271.mjs.map
+//# sourceMappingURL=functionsWorker-0.10868884298941084.mjs.map
