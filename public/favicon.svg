@@ -1,0 +1,49 @@
+<!-- Favicon Solverive: planeta con aro, sin márgenes y sin animación -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <!-- Gradiente de marca -->
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#06b6d4"/>
+      <stop offset="1" stop-color="#7c3aed"/>
+    </linearGradient>
+
+    <!-- Brillo suave -->
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="1.6" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+
+    <!-- Máscara para mostrar SOLO la franja frontal del aro sobre el planeta -->
+    <mask id="frontBand">
+      <rect width="100%" height="100%" fill="black"/>
+      <!-- píldora centrada y rotada: controla el grosor visible del aro frontal -->
+      <rect x="10" y="28" width="44" height="8" rx="4" ry="4"
+            fill="white" transform="rotate(-25 32 32)"/>
+    </mask>
+  </defs>
+
+  <!-- ARO (parte trasera, completo) -->
+  <ellipse cx="32" cy="32" rx="26" ry="13"
+           transform="rotate(-25 32 32)"
+           fill="none" stroke="url(#g)" stroke-width="6"
+           opacity=".55" filter="url(#glow)"/>
+
+  <!-- PLANETA -->
+  <radialGradient id="gp" cx="28%" cy="28%" r="75%">
+    <stop offset="0" stop-color="#06b6d4"/>
+    <stop offset="1" stop-color="#7c3aed"/>
+  </radialGradient>
+  <circle cx="32" cy="32" r="12" fill="url(#gp)" filter="url(#glow)"/>
+
+  <!-- Brillo del planeta -->
+  <circle cx="27" cy="27" r="4.2" fill="rgba(255,255,255,.85)"/>
+  <circle cx="37.5" cy="38" r="2.1" fill="rgba(255,255,255,.45)"/>
+
+  <!-- ARO (frontal) solo en la franja que cruza el planeta -->
+  <g mask="url(#frontBand)">
+    <ellipse cx="32" cy="32" rx="26" ry="13"
+             transform="rotate(-25 32 32)"
+             fill="none" stroke="url(#g)" stroke-width="6"
+             opacity=".95" filter="url(#glow)"/>
+  </g>
+</svg>

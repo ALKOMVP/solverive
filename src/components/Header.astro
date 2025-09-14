@@ -1,0 +1,17 @@
+---
+const links = [
+  { href: '/#services', label: 'Services' },
+  { href: '/#benefits', label: 'Benefits' },
+  { href: '/blog', label: 'Blog' },
+  { href: '/docs', label: 'Docs' },
+  { href: '/#contact', label: 'Contact' },
+]
+---
+<nav>
+  <div class="container" style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;">
+    <a href="/" style="font-weight:800">Solverive</a>
+    <div style="display:flex;gap:16px">
+      {links.map((l) => <a href={l.href}>{l.label}</a>)}
+    </div>
+  </div>
+</nav>

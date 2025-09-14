@@ -1,0 +1,10 @@
+name = "solverive-astro"
+compatibility_date = "2024-09-14"
+
+[ai]
+binding = "AI"
+
+# opcional (en local verás un warning; está bien)
+[[vectorize]]
+binding = "VECTORIZE"
+index_name = "solverive-kb"

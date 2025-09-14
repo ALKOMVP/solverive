@@ -1,0 +1,12 @@
+---
+import { getEntryBySlug } from 'astro:content'
+export function getStaticPaths(){ return [] }
+const { slug } = Astro.params
+const page = await getEntryBySlug('docs', slug)
+if(!page) throw new Error('Not found')
+const { Content, data } = await page.render()
+---
+<div class="container" style="padding:60px 0">
+  <h1>{data.title}</h1>
+  <article class="card"><Content /></article>
+</div>

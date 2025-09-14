@@ -1,0 +1,12 @@
+---
+import { getCollection } from 'astro:content'
+const pages = await getCollection('docs')
+---
+<div class="container" style="padding:60px 0">
+  <h1>Docs</h1>
+  <ul>
+    {pages.sort((a,b)=> a.data.order-b.data.order).map(p => (
+      <li><a href={'/docs/' + p.slug}>{p.data.title}</a></li>
+    ))}
+  </ul>
+</div>

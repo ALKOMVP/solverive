@@ -1,0 +1,16 @@
+---
+import { getCollection, getEntryBySlug } from 'astro:content'
+export async function getStaticPaths(){
+  const posts = await getCollection('blog')
+  return posts.map(p=>({ params:{ slug: p.slug } }))
+}
+const { slug } = Astro.params
+const post = await getEntryBySlug('blog', slug)
+if(!post) throw new Error('Not found')
+const { Content, data } = await post.render()
+---
+<div class="container" style="padding:60px 0">
+  <h1>{data?.title}</h1>
+  <p style="color:var(--muted)">{data?.date.toISOString().slice(0,10)}</p>
+  <article class="card"><Content /></article>
+</div>

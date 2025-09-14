@@ -1,0 +1,12 @@
+---
+import { getCollection } from 'astro:content'
+const posts = await getCollection('blog', (p)=>!p.data.draft)
+---
+<div class="container" style="padding:60px 0">
+  <h1>Blog</h1>
+  <ul>
+    {posts.sort((a,b)=> b.data.date.getTime()-a.data.date.getTime()).map(p => (
+      <li><a href={'/blog/' + p.slug}>{p.data.title}</a> — {p.data.date.toISOString().slice(0,10)}</li>
+    ))}
+  </ul>
+</div>
