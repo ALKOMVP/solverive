@@ -65,6 +65,9 @@ const description =
         --card: #11162a;
         --glass: rgba(255, 255, 255, 0.06);
         --ring: rgba(124, 58, 237, 0.35);
+
+        --nav-glass-bg: linear-gradient(180deg, rgba(17,22,42,.78), rgba(17,22,42,.58));
+        --nav-border-grad: linear-gradient(180deg, rgba(255,255,255,.18), rgba(255,255,255,.08));
       }
       * {
         box-sizing: border-box;
@@ -142,6 +145,7 @@ const description =
       /* Nav */
       .nav {
         position: fixed;
+        background: transparent;
         top: 12px;
         left: 50%;
         transform: translateX(-50%);
