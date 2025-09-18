@@ -50,8 +50,8 @@ export const onRequestPost: PagesFunction<Env> = async (ctx) => {
   // 1) RAG (opcional y NO bloqueante)
   // ---------------------------
   // Umbrales
-  const RAG_MIN_SCORE = 0.72;          // mínimo para considerar el fragmento relevante
-  const RAG_STRICT_SCORE = 0.78;       // si la mejor coincidencia supera esto → respondemos SOLO con contexto
+  const RAG_MIN_SCORE = 0.60;          // mínimo para considerar el fragmento relevante
+  const RAG_STRICT_SCORE = 0.70;       // si la mejor coincidencia supera esto → respondemos SOLO con contexto
   const MAX_CONTEXT_CHARS = 1800;      // recorte de contexto para el prompt
 
   let matches: any[] = [];
@@ -61,7 +61,7 @@ export const onRequestPost: PagesFunction<Env> = async (ctx) => {
 
   try {
     // Embedding del query (array para compatibilidad)
-    const emb = await env.AI.run("@cf/baai/bge-base-en-v1.5", { text: [raw] });
+    const emb = await env.AI.run("@cf/baai/bge-m3", { text: [raw] });
     const queryVec = emb?.data?.[0];
 
     if (env.VECTORIZE?.query && Array.isArray(queryVec)) {
@@ -70,8 +70,7 @@ export const onRequestPost: PagesFunction<Env> = async (ctx) => {
         returnMetadata: true,
         includeVectors: false,
         returnValues: false,
-        // Si querés limitar a FAQs: descomenta la línea siguiente
-        // filter: { type: "faq" }
+        filter: { type: "faq" }   // <- solo FAQs
       });
 
       // Ordenamos por score descendente por si el backend no lo hace

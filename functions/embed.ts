@@ -106,7 +106,7 @@ export const onRequest: PagesFunction = async ({ request, env }) => {
 
     // --- 3) Embeddings por lote ---
     const texts = docs.map((d) => d.text);
-    const emb = await env.AI.run("@cf/baai/bge-base-en-v1.5", { text: texts });
+    const emb = await env.AI.run("@cf/baai/bge-m3", { text: [raw] });
     const vectors: number[][] = emb?.data ?? [];
     if (!vectors.length) return j({ error: "Embedding model returned empty vectors" }, 500);
 
