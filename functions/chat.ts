@@ -58,13 +58,16 @@ export const onRequestPost: PagesFunction<Env> = async (ctx) => {
   let contextBlocks: string[] = [];
   let confidence = 0;
   let mode: "rag" | "general" = "general";
+  let ragDebug: any = {};
+
 
   try {
     // Embedding del query (array para compatibilidad)
     const emb = await env.AI.run("@cf/baai/bge-m3", { text: [raw] });
     const queryVec = emb?.data?.[0];
+    if (!Array.isArray(queryVec)) throw new Error("embedding_empty");
 
-    if (env.VECTORIZE?.query && Array.isArray(queryVec)) {
+    if (env.VECTORIZE?.query) {
       const res = await env.VECTORIZE.query(queryVec, {
         topK,
         returnMetadata: true,
@@ -96,9 +99,11 @@ export const onRequestPost: PagesFunction<Env> = async (ctx) => {
       // Dedupe básico por contenido (evita repetir el mismo fragmento)
       contextBlocks = dedupeByText(contextBlocks).slice(0, 5);
       if (contextBlocks.length) mode = "rag";
+      else ragDebug.noContextAfterFilter = { topK, got: matches.length };
     }
-  } catch {
+  } catch (e: any) {
     // Si RAG falla, seguimos en "general" sin romper la UX
+    ragDebug.error = String(e?.message ?? e);
   }
 
   // Heurística: saludo amable si sólo saludan
@@ -206,6 +211,7 @@ ${contextBlocks.length ? `CONTEXTO (fragmentos numerados):\n${contextTrimmed}` :
       meta: m?.metadata ?? {},
     })),
     modelUsed,
+    ragDebug,
     suggestions:
       mode === "general"
         ? ["Servicios", "Precios", "Casos de uso", "Implementación"]
