@@ -1,7 +1,7 @@
 // functions/chat.ts
 interface Env {
-  AI: any;              // Binding de Workers AI (obligatorio en prod)
-  VECTORIZE?: any;      // Binding de Vectorize (opcional)
+  AI: any; // Binding de Workers AI (obligatorio en prod)
+  VECTORIZE?: any; // Binding de Vectorize (opcional)
 }
 
 type In = {
@@ -21,15 +21,24 @@ export const onRequestPost: PagesFunction<Env> = async (ctx) => {
 
   // Parseo seguro
   let body: In = {};
-  try { body = await request.json<In>(); } catch { /* noop */ }
+  try {
+    body = await request.json<In>();
+  } catch {
+    /* noop */
+  }
 
   // Normalización de entrada
-  const raw =
-    (body.query ?? body.message ?? body.text ?? "").toString().trim().replace(/\s+/g, " ");
+  const raw = (body.query ?? body.message ?? body.text ?? "")
+    .toString()
+    .trim()
+    .replace(/\s+/g, " ");
   const topK = clampNumber(Number(body.topK ?? 6), 1, 16);
 
   if (!raw) {
-    return json({ error: "Body inválido. Enviá JSON con { query: '...' }" }, 400);
+    return json(
+      { error: "Body inválido. Enviá JSON con { query: '...' }" },
+      400
+    );
   }
 
   // Entorno sin AI → aviso (útil en dev)
@@ -50,9 +59,9 @@ export const onRequestPost: PagesFunction<Env> = async (ctx) => {
   // 1) RAG (opcional y NO bloqueante)
   // ---------------------------
   // Umbrales
-  const RAG_MIN_SCORE = 0.60;          // mínimo para considerar el fragmento relevante
-  const RAG_STRICT_SCORE = 0.70;       // si la mejor coincidencia supera esto → respondemos SOLO con contexto
-  const MAX_CONTEXT_CHARS = 1800;      // recorte de contexto para el prompt
+  const RAG_MIN_SCORE = 0.6; // mínimo para considerar el fragmento relevante
+  const RAG_STRICT_SCORE = 0.7; // si la mejor coincidencia supera esto → respondemos SOLO con contexto
+  const MAX_CONTEXT_CHARS = 1800; // recorte de contexto para el prompt
 
   let matches: any[] = [];
   let contextBlocks: string[] = [];
@@ -60,10 +69,9 @@ export const onRequestPost: PagesFunction<Env> = async (ctx) => {
   let mode: "rag" | "general" = "general";
   let ragDebug: any = {};
 
-
   try {
     // Embedding del query (array para compatibilidad)
-    const emb = await env.AI.run("@cf/baai/bge-m3", { text: [raw] });
+    await env.AI.run("@cf/baai/bge-base-en-v1.5", { text: [raw] });
     const queryVec = emb?.data?.[0];
     if (!Array.isArray(queryVec)) throw new Error("embedding_empty");
 
@@ -73,11 +81,13 @@ export const onRequestPost: PagesFunction<Env> = async (ctx) => {
         returnMetadata: true,
         includeVectors: false,
         returnValues: false,
-        filter: { type: "faq" }   // <- solo FAQs
+        filter: { type: "faq" }, // <- solo FAQs
       });
 
       // Ordenamos por score descendente por si el backend no lo hace
-      matches = (res?.matches ?? []).sort((a: any, b: any) => (b?.score ?? 0) - (a?.score ?? 0));
+      matches = (res?.matches ?? []).sort(
+        (a: any, b: any) => (b?.score ?? 0) - (a?.score ?? 0)
+      );
 
       // Construcción de contexto y cálculo de confianza
       for (let i = 0; i < matches.length; i++) {
@@ -125,7 +135,9 @@ export const onRequestPost: PagesFunction<Env> = async (ctx) => {
   // ---------------------------
   const needs70b =
     confidence < 0.55 ||
-    /resumen|compar(a|ar)|pro(s|s y contras)|estratégico|ejecutivo|roadmap|arquitectura/i.test(raw);
+    /resumen|compar(a|ar)|pro(s|s y contras)|estratégico|ejecutivo|roadmap|arquitectura/i.test(
+      raw
+    );
 
   const primaryModel = needs70b
     ? "@cf/meta/llama-3.1-70b-instruct"
@@ -145,7 +157,11 @@ export const onRequestPost: PagesFunction<Env> = async (ctx) => {
   const userPrompt = `
 Usuario: ${raw}
 
-${contextBlocks.length ? `CONTEXTO (fragmentos numerados):\n${contextTrimmed}` : "No hay contexto de base de conocimiento."}
+${
+  contextBlocks.length
+    ? `CONTEXTO (fragmentos numerados):\n${contextTrimmed}`
+    : "No hay contexto de base de conocimiento."
+}
 `.trim();
 
   // ---------------------------
@@ -159,11 +175,16 @@ ${contextBlocks.length ? `CONTEXTO (fragmentos numerados):\n${contextTrimmed}` :
         { role: "system", content: systemPrompt },
         { role: "user", content: userPrompt },
       ],
-      temperature: ragIsStrict ? 0.2 : (needs70b ? 0.25 : 0.35),
+      temperature: ragIsStrict ? 0.2 : needs70b ? 0.25 : 0.35,
       max_tokens: needs70b ? 700 : 380,
-      top_p: 0.9
+      top_p: 0.9,
     });
-    answer = (res?.response ?? res?.output_text ?? res?.result?.response ?? "").toString();
+    answer = (
+      res?.response ??
+      res?.output_text ??
+      res?.result?.response ??
+      ""
+    ).toString();
   } catch {
     // Fallback a 8B si el 70B no está disponible o rate-limited
     if (primaryModel.includes("70b")) {
@@ -175,7 +196,7 @@ ${contextBlocks.length ? `CONTEXTO (fragmentos numerados):\n${contextTrimmed}` :
         ],
         temperature: ragIsStrict ? 0.2 : 0.35,
         max_tokens: 380,
-        top_p: 0.9
+        top_p: 0.9,
       });
       answer = (res?.response ?? res?.output_text ?? "").toString();
     } else {
@@ -215,7 +236,11 @@ ${contextBlocks.length ? `CONTEXTO (fragmentos numerados):\n${contextTrimmed}` :
     suggestions:
       mode === "general"
         ? ["Servicios", "Precios", "Casos de uso", "Implementación"]
-        : ["¿Querés que te resuma las fuentes?", "¿Buscamos más documentos?", "¿Generamos próximos pasos?"],
+        : [
+            "¿Querés que te resuma las fuentes?",
+            "¿Buscamos más documentos?",
+            "¿Generamos próximos pasos?",
+          ],
   });
 };
 
@@ -260,13 +285,13 @@ function buildSystemPrompt(ragOnly: boolean) {
       "Debes responder SOLO usando la información del CONTEXTO.",
       "Si algo no está en el CONTEXTO, di: 'No tengo información precisa en mis fuentes para responder eso por ahora.'",
       "Cita las fuentes al final con el formato 'Fuentes: [1], [2]'.",
-      "Sé conciso, evita relleno y no inventes URLs."
+      "Sé conciso, evita relleno y no inventes URLs.",
     ].join(" ");
   }
   return [
     "Eres un asistente de Solverive. Respondes SIEMPRE en español, claro y profesional.",
     "Si hay CONTEXTO, úsalo y cita las fuentes al final con el formato 'Fuentes: [1], [2]'.",
     "Si no hay contexto suficiente, podés ayudar con conocimiento general y guías prácticas, evitando alucinaciones e invenciones.",
-    "Da próximos pasos accionables cuando tenga sentido. Sé conciso y no inventes URLs."
+    "Da próximos pasos accionables cuando tenga sentido. Sé conciso y no inventes URLs.",
   ].join(" ");
 }
