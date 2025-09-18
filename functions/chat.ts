@@ -1,7 +1,7 @@
 // functions/chat.ts
 interface Env {
-  AI: any; // Binding de Workers AI (obligatorio en prod)
-  VECTORIZE?: any; // Binding de Vectorize (opcional)
+  AI: any;              // Binding de Workers AI (obligatorio en prod)
+  VECTORIZE?: any;      // Binding de Vectorize (opcional)
 }
 
 type In = {
@@ -14,18 +14,13 @@ type In = {
 export const onRequestPost: PagesFunction<Env> = async (ctx) => {
   const { request, env } = ctx;
 
-  // Métodos permitidos
   if (request.method !== "POST") {
     return new Response("Method Not Allowed", { status: 405 });
   }
 
   // Parseo seguro
   let body: In = {};
-  try {
-    body = await request.json<In>();
-  } catch {
-    /* noop */
-  }
+  try { body = await request.json<In>(); } catch { /* noop */ }
 
   // Normalización de entrada
   const raw = (body.query ?? body.message ?? body.text ?? "")
@@ -35,13 +30,9 @@ export const onRequestPost: PagesFunction<Env> = async (ctx) => {
   const topK = clampNumber(Number(body.topK ?? 6), 1, 16);
 
   if (!raw) {
-    return json(
-      { error: "Body inválido. Enviá JSON con { query: '...' }" },
-      400
-    );
+    return json({ error: "Body inválido. Enviá JSON con { query: '...' }" }, 400);
   }
 
-  // Entorno sin AI → aviso (útil en dev)
   if (!env.AI) {
     return json({
       answer:
@@ -58,10 +49,9 @@ export const onRequestPost: PagesFunction<Env> = async (ctx) => {
   // ---------------------------
   // 1) RAG (opcional y NO bloqueante)
   // ---------------------------
-  // Umbrales
-  const RAG_MIN_SCORE = 0.6; // mínimo para considerar el fragmento relevante
-  const RAG_STRICT_SCORE = 0.7; // si la mejor coincidencia supera esto → respondemos SOLO con contexto
-  const MAX_CONTEXT_CHARS = 1800; // recorte de contexto para el prompt
+  const RAG_MIN_SCORE = 0.60;
+  const RAG_STRICT_SCORE = 0.70;
+  const MAX_CONTEXT_CHARS = 1800;
 
   let matches: any[] = [];
   let contextBlocks: string[] = [];
@@ -70,8 +60,8 @@ export const onRequestPost: PagesFunction<Env> = async (ctx) => {
   let ragDebug: any = {};
 
   try {
-    // Embedding del query (array para compatibilidad)
-    await env.AI.run("@cf/baai/bge-base-en-v1.5", { text: [raw] });
+    // IMPORTANT: índice actual = 768 dims → usamos bge-base-en-v1.5
+    const emb = await env.AI.run("@cf/baai/bge-base-en-v1.5", { text: [raw] });
     const queryVec = emb?.data?.[0];
     if (!Array.isArray(queryVec)) throw new Error("embedding_empty");
 
@@ -81,24 +71,20 @@ export const onRequestPost: PagesFunction<Env> = async (ctx) => {
         returnMetadata: true,
         includeVectors: false,
         returnValues: false,
-        filter: { type: "faq" }, // <- solo FAQs
+        filter: { type: "faq" }, // solo FAQs
       });
 
-      // Ordenamos por score descendente por si el backend no lo hace
       matches = (res?.matches ?? []).sort(
-        (a: any, b: any) => (b?.score ?? 0) - (a?.score ?? 0)
+        (a: any, b: any) => (b?.score ?? 0) - (a?.score ?? 0),
       );
 
-      // Construcción de contexto y cálculo de confianza
       for (let i = 0; i < matches.length; i++) {
         const m = matches[i];
         const score = Number(m?.score ?? 0);
         confidence = Math.max(confidence, score);
-
-        if (score < RAG_MIN_SCORE) continue; // descartamos ruido
+        if (score < RAG_MIN_SCORE) continue;
 
         const meta = m?.metadata ?? {};
-        // En embed.ts guardamos el texto en metadata.text
         const text = (meta.text ?? meta.excerpt ?? m?.text ?? "").toString();
         if (!text) continue;
 
@@ -106,13 +92,13 @@ export const onRequestPost: PagesFunction<Env> = async (ctx) => {
         contextBlocks.push(`${i + 1}. ${title}${text}`.trim());
       }
 
-      // Dedupe básico por contenido (evita repetir el mismo fragmento)
       contextBlocks = dedupeByText(contextBlocks).slice(0, 5);
       if (contextBlocks.length) mode = "rag";
       else ragDebug.noContextAfterFilter = { topK, got: matches.length };
+    } else {
+      ragDebug.vectorize = "missing_query_fn_or_binding";
     }
   } catch (e: any) {
-    // Si RAG falla, seguimos en "general" sin romper la UX
     ragDebug.error = String(e?.message ?? e);
   }
 
@@ -135,9 +121,7 @@ export const onRequestPost: PagesFunction<Env> = async (ctx) => {
   // ---------------------------
   const needs70b =
     confidence < 0.55 ||
-    /resumen|compar(a|ar)|pro(s|s y contras)|estratégico|ejecutivo|roadmap|arquitectura/i.test(
-      raw
-    );
+    /resumen|compar(a|ar)|pro(s|s y contras)|estratégico|ejecutivo|roadmap|arquitectura/i.test(raw);
 
   const primaryModel = needs70b
     ? "@cf/meta/llama-3.1-70b-instruct"
@@ -147,7 +131,6 @@ export const onRequestPost: PagesFunction<Env> = async (ctx) => {
 
   const systemPrompt = buildSystemPrompt(ragIsStrict);
 
-  // Recortamos contexto total para no pasarnos de tokens
   const joinedContext = contextBlocks.join("\n\n");
   const contextTrimmed =
     joinedContext.length > MAX_CONTEXT_CHARS
@@ -157,11 +140,7 @@ export const onRequestPost: PagesFunction<Env> = async (ctx) => {
   const userPrompt = `
 Usuario: ${raw}
 
-${
-  contextBlocks.length
-    ? `CONTEXTO (fragmentos numerados):\n${contextTrimmed}`
-    : "No hay contexto de base de conocimiento."
-}
+${contextBlocks.length ? `CONTEXTO (fragmentos numerados):\n${contextTrimmed}` : "No hay contexto de base de conocimiento."}
 `.trim();
 
   // ---------------------------
@@ -175,18 +154,12 @@ ${
         { role: "system", content: systemPrompt },
         { role: "user", content: userPrompt },
       ],
-      temperature: ragIsStrict ? 0.2 : needs70b ? 0.25 : 0.35,
+      temperature: ragIsStrict ? 0.2 : (needs70b ? 0.25 : 0.35),
       max_tokens: needs70b ? 700 : 380,
       top_p: 0.9,
     });
-    answer = (
-      res?.response ??
-      res?.output_text ??
-      res?.result?.response ??
-      ""
-    ).toString();
+    answer = (res?.response ?? res?.output_text ?? res?.result?.response ?? "").toString();
   } catch {
-    // Fallback a 8B si el 70B no está disponible o rate-limited
     if (primaryModel.includes("70b")) {
       modelUsed = "@cf/meta/llama-3.1-8b-instruct";
       const res = await env.AI.run(modelUsed, {
@@ -200,7 +173,7 @@ ${
       });
       answer = (res?.response ?? res?.output_text ?? "").toString();
     } else {
-      throw new Error("Fallo de inferencia con 8B");
+      answer = "";
     }
   }
 
@@ -209,12 +182,10 @@ ${
       "No pude generar respuesta en este momento. Probá de nuevo o contame con un poco más de detalle qué necesitás.";
   }
 
-  // Armamos lista de fuentes citables (solo las que pasaron el filtro)
   const cited = matches
     .filter((m: any) => Number(m?.score ?? 0) >= RAG_MIN_SCORE)
     .slice(0, contextBlocks.length);
 
-  // Si tenemos contexto y el modelo no añadió “Fuentes:”, lo agregamos nosotros
   if (contextBlocks.length && !/Fuentes\s*:/i.test(answer)) {
     const numeritos = cited.map((_, i) => `[${i + 1}]`).join(", ");
     answer = `${answer.trim()}\n\nFuentes: ${numeritos}`;
@@ -236,11 +207,7 @@ ${
     suggestions:
       mode === "general"
         ? ["Servicios", "Precios", "Casos de uso", "Implementación"]
-        : [
-            "¿Querés que te resuma las fuentes?",
-            "¿Buscamos más documentos?",
-            "¿Generamos próximos pasos?",
-          ],
+        : ["¿Querés que te resuma las fuentes?", "¿Buscamos más documentos?", "¿Generamos próximos pasos?"],
   });
 };
 
