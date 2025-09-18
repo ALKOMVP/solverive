@@ -26,7 +26,7 @@ export const onRequestPost: PagesFunction<Env> = async (ctx) => {
   // Normalización de entrada
   const raw =
     (body.query ?? body.message ?? body.text ?? "").toString().trim().replace(/\s+/g, " ");
-  const topK = clampNumber(Number(body.topK ?? 5), 1, 16);
+  const topK = clampNumber(Number(body.topK ?? 6), 1, 16);
 
   if (!raw) {
     return json({ error: "Body inválido. Enviá JSON con { query: '...' }" }, 400);
@@ -49,33 +49,53 @@ export const onRequestPost: PagesFunction<Env> = async (ctx) => {
   // ---------------------------
   // 1) RAG (opcional y NO bloqueante)
   // ---------------------------
+  // Umbrales
+  const RAG_MIN_SCORE = 0.72;          // mínimo para considerar el fragmento relevante
+  const RAG_STRICT_SCORE = 0.78;       // si la mejor coincidencia supera esto → respondemos SOLO con contexto
+  const MAX_CONTEXT_CHARS = 1800;      // recorte de contexto para el prompt
+
   let matches: any[] = [];
   let contextBlocks: string[] = [];
   let confidence = 0;
   let mode: "rag" | "general" = "general";
 
   try {
-    // Embedding (podés cambiar por un modelo multilingüe si lo activás en tu cuenta)
-    const emb = await env.AI.run("@cf/baai/bge-base-en-v1.5", { text: raw });
-    const queryVec = emb?.data?.[0] ?? emb?.[0];
+    // Embedding del query (array para compatibilidad)
+    const emb = await env.AI.run("@cf/baai/bge-base-en-v1.5", { text: [raw] });
+    const queryVec = emb?.data?.[0];
 
     if (env.VECTORIZE?.query && Array.isArray(queryVec)) {
       const res = await env.VECTORIZE.query(queryVec, {
         topK,
         returnMetadata: true,
+        includeVectors: false,
+        returnValues: false,
+        // Si querés limitar a FAQs: descomenta la línea siguiente
+        // filter: { type: "faq" }
       });
-      matches = res?.matches ?? [];
+
+      // Ordenamos por score descendente por si el backend no lo hace
+      matches = (res?.matches ?? []).sort((a: any, b: any) => (b?.score ?? 0) - (a?.score ?? 0));
 
       // Construcción de contexto y cálculo de confianza
       for (let i = 0; i < matches.length; i++) {
         const m = matches[i];
-        confidence = Math.max(confidence, Number(m?.score ?? 0));
+        const score = Number(m?.score ?? 0);
+        confidence = Math.max(confidence, score);
+
+        if (score < RAG_MIN_SCORE) continue; // descartamos ruido
+
         const meta = m?.metadata ?? {};
-        const text = meta.text ?? meta.excerpt ?? m?.text ?? "";
+        // En embed.ts guardamos el texto en metadata.text
+        const text = (meta.text ?? meta.excerpt ?? m?.text ?? "").toString();
+        if (!text) continue;
+
         const title = meta.title ? `**${meta.title}**\n` : "";
-        if (text) contextBlocks.push(`${i + 1}. ${title}${text}`);
+        contextBlocks.push(`${i + 1}. ${title}${text}`.trim());
       }
 
+      // Dedupe básico por contenido (evita repetir el mismo fragmento)
+      contextBlocks = dedupeByText(contextBlocks).slice(0, 5);
       if (contextBlocks.length) mode = "rag";
     }
   } catch {
@@ -101,25 +121,27 @@ export const onRequestPost: PagesFunction<Env> = async (ctx) => {
   // ---------------------------
   const needs70b =
     confidence < 0.55 ||
-    /resumen|compar(a|ar)|pro(s|s y contras)|estratégico|ejecutivo|roadmap|arquitectura/i.test(
-      raw,
-    );
+    /resumen|compar(a|ar)|pro(s|s y contras)|estratégico|ejecutivo|roadmap|arquitectura/i.test(raw);
 
   const primaryModel = needs70b
     ? "@cf/meta/llama-3.1-70b-instruct"
     : "@cf/meta/llama-3.1-8b-instruct";
 
-  const systemPrompt = `
-Eres un asistente de Solverive. Respondes SIEMPRE en español, claro y profesional.
-Si hay CONTEXTO, úsalo para dar respuestas específicas y **cita las fuentes** al final con el formato "Fuentes: [1], [2]".
-Si no hay contexto, igual ayuda con conocimiento general y guía práctica. Ofrece próximos pasos cuando tenga sentido.
-Sé conciso, evita relleno y no inventes URLs.
-`.trim();
+  const ragIsStrict = mode === "rag" && confidence >= RAG_STRICT_SCORE;
+
+  const systemPrompt = buildSystemPrompt(ragIsStrict);
+
+  // Recortamos contexto total para no pasarnos de tokens
+  const joinedContext = contextBlocks.join("\n\n");
+  const contextTrimmed =
+    joinedContext.length > MAX_CONTEXT_CHARS
+      ? joinedContext.slice(0, MAX_CONTEXT_CHARS) + "\n…"
+      : joinedContext;
 
   const userPrompt = `
 Usuario: ${raw}
 
-${contextBlocks.length ? `CONTEXTO (fragmentos numerados):\n${contextBlocks.join("\n\n")}` : "No hay contexto de base de conocimiento."}
+${contextBlocks.length ? `CONTEXTO (fragmentos numerados):\n${contextTrimmed}` : "No hay contexto de base de conocimiento."}
 `.trim();
 
   // ---------------------------
@@ -133,8 +155,9 @@ ${contextBlocks.length ? `CONTEXTO (fragmentos numerados):\n${contextBlocks.join
         { role: "system", content: systemPrompt },
         { role: "user", content: userPrompt },
       ],
-      temperature: needs70b ? 0.25 : 0.35,
-      max_tokens: needs70b ? 700 : 350,
+      temperature: ragIsStrict ? 0.2 : (needs70b ? 0.25 : 0.35),
+      max_tokens: needs70b ? 700 : 380,
+      top_p: 0.9
     });
     answer = (res?.response ?? res?.output_text ?? res?.result?.response ?? "").toString();
   } catch {
@@ -146,8 +169,9 @@ ${contextBlocks.length ? `CONTEXTO (fragmentos numerados):\n${contextBlocks.join
           { role: "system", content: systemPrompt },
           { role: "user", content: userPrompt },
         ],
-        temperature: 0.35,
-        max_tokens: 350,
+        temperature: ragIsStrict ? 0.2 : 0.35,
+        max_tokens: 380,
+        top_p: 0.9
       });
       answer = (res?.response ?? res?.output_text ?? "").toString();
     } else {
@@ -155,10 +179,20 @@ ${contextBlocks.length ? `CONTEXTO (fragmentos numerados):\n${contextBlocks.join
     }
   }
 
-  // Si por algún motivo no vino texto, devolvemos algo digno
   if (!answer) {
     answer =
       "No pude generar respuesta en este momento. Probá de nuevo o contame con un poco más de detalle qué necesitás.";
+  }
+
+  // Armamos lista de fuentes citables (solo las que pasaron el filtro)
+  const cited = matches
+    .filter((m: any) => Number(m?.score ?? 0) >= RAG_MIN_SCORE)
+    .slice(0, contextBlocks.length);
+
+  // Si tenemos contexto y el modelo no añadió “Fuentes:”, lo agregamos nosotros
+  if (contextBlocks.length && !/Fuentes\s*:/i.test(answer)) {
+    const numeritos = cited.map((_, i) => `[${i + 1}]`).join(", ");
+    answer = `${answer.trim()}\n\nFuentes: ${numeritos}`;
   }
 
   return json({
@@ -166,7 +200,7 @@ ${contextBlocks.length ? `CONTEXTO (fragmentos numerados):\n${contextBlocks.join
     mode,
     confidence,
     confidenceLabel: label(confidence),
-    sources: matches.map((m: any, i: number) => ({
+    sources: cited.map((m: any, i: number) => ({
       n: i + 1,
       id: m?.id,
       score: m?.score,
@@ -199,4 +233,35 @@ function json(data: any, status = 200) {
     status,
     headers: { "content-type": "application/json; charset=utf-8" },
   });
+}
+
+function dedupeByText(arr: string[]) {
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const s of arr) {
+    const key = s.toLowerCase();
+    if (!seen.has(key)) {
+      seen.add(key);
+      out.push(s);
+    }
+  }
+  return out;
+}
+
+function buildSystemPrompt(ragOnly: boolean) {
+  if (ragOnly) {
+    return [
+      "Eres un asistente de Solverive. Respondes SIEMPRE en español, claro y profesional.",
+      "Debes responder SOLO usando la información del CONTEXTO.",
+      "Si algo no está en el CONTEXTO, di: 'No tengo información precisa en mis fuentes para responder eso por ahora.'",
+      "Cita las fuentes al final con el formato 'Fuentes: [1], [2]'.",
+      "Sé conciso, evita relleno y no inventes URLs."
+    ].join(" ");
+  }
+  return [
+    "Eres un asistente de Solverive. Respondes SIEMPRE en español, claro y profesional.",
+    "Si hay CONTEXTO, úsalo y cita las fuentes al final con el formato 'Fuentes: [1], [2]'.",
+    "Si no hay contexto suficiente, podés ayudar con conocimiento general y guías prácticas, evitando alucinaciones e invenciones.",
+    "Da próximos pasos accionables cuando tenga sentido. Sé conciso y no inventes URLs."
+  ].join(" ");
 }
