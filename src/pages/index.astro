@@ -4,9 +4,9 @@ import Header from "../components/Header.astro";
 import ChatWidget from "../components/ChatWidget.jsx";
 
 const title =
-  "Solverive – Helping businesses solve & thrive with AI";
+  "Solverive – Custom AI Chatbots & Automation for Businesses";
 const description =
-  "Solverive makes AI simple: custom chatbots, automation and advisory for companies of all sizes. Launch fast, scale safely, measure impact.";
+  "Solverive helps businesses solve & thrive with AI: custom chatbots, automation and advisory. Launch fast, scale safely, measure impact.";
 ---
 
 <!doctype html>
@@ -24,11 +24,11 @@ const description =
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://solverive.com/" />
     <meta property="og:title" content="Solverive – Helping businesses solve & thrive" />
-    <meta property="og:description" content="AI made simple for business: custom chatbots, automation, advisory." />
+    <meta property="og:description" content={description} />
     <meta property="og:image" content="https://solverive.com/og-image.jpg" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Solverive – Helping businesses solve & thrive" />
-    <meta name="twitter:description" content="AI made simple for business: custom chatbots, automation, advisory." />
+    <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content="https://solverive.com/og-image.jpg" />
     <meta name="robots" content="index,follow" />
 
@@ -65,130 +65,533 @@ const description =
           rgba(255, 255, 255, 0.08)
         );
       }
-      * { box-sizing: border-box; }
-      html:focus-within { scroll-behavior: smooth; }
+      * {
+        box-sizing: border-box;
+      }
+      html:focus-within {
+        scroll-behavior: smooth;
+      }
       body {
         margin: 0;
-        font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell;
+        font-family:
+          Inter,
+          system-ui,
+          -apple-system,
+          Segoe UI,
+          Roboto,
+          Ubuntu,
+          Cantarell;
         line-height: 1.6;
         color: var(--text);
-        background:
-          radial-gradient(900px 500px at 90% -10%, rgba(124, 58, 237, 0.18), transparent),
-          radial-gradient(800px 500px at 10% 0%, rgba(6, 182, 212, 0.14), transparent),
+        background: radial-gradient(
+            900px 500px at 90% -10%,
+            rgba(124, 58, 237, 0.18),
+            transparent
+          ),
+          radial-gradient(
+            800px 500px at 10% 0%,
+            rgba(6, 182, 212, 0.14),
+            transparent
+          ),
           linear-gradient(180deg, var(--bg), var(--bg-alt));
         overflow-x: hidden;
         -webkit-font-smoothing: antialiased;
         text-rendering: optimizeLegibility;
       }
-      a { color: inherit; text-decoration: none; }
-      .container { max-width: 1100px; margin: 0 auto; padding-inline: 28px; }
-      @media (min-width: 768px) { .container { padding-inline: 40px; } }
-      .container-edge-safe { padding-inline: max(28px, env(safe-area-inset-left)); }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+      .container {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding-inline: 28px;
+      }
+      @media (min-width: 768px) {
+        .container {
+          padding-inline: 40px;
+        }
+      }
+      .container-edge-safe {
+        padding-inline: max(28px, env(safe-area-inset-left));
+      }
 
       /* Skip link */
       .skip-link {
-        position: absolute; left: -999px; top: auto; width: 1px; height: 1px; overflow: hidden;
+        position: absolute;
+        left: -999px;
+        top: auto;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
       }
       .skip-link:focus {
-        left: 16px; top: 12px; width: auto; height: auto; z-index: 1000;
-        background: #11162a; color: white; padding: 10px 14px; border-radius: 10px; outline: 2px solid #a78bfa;
+        left: 16px;
+        top: 12px;
+        width: auto;
+        height: auto;
+        z-index: 1000;
+        background: #11162a;
+        color: white;
+        padding: 10px 14px;
+        border-radius: 10px;
+        outline: 2px solid #a78bfa;
       }
 
       /* Nav */
-      .nav { position: fixed; background: transparent; top: 12px; left: 50%; transform: translateX(-50%); z-index: 50; width: min(1100px, 92%); border-radius: 16px; }
+      .nav {
+        position: fixed;
+        background: transparent;
+        top: 12px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 50;
+        width: min(1100px, 92%);
+        border-radius: 16px;
+      }
       .nav-inner {
-        backdrop-filter: blur(16px); background: var(--glass); display: flex; justify-content: space-between; align-items: center;
-        border-radius: 16px; padding: 12px 16px; border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 6px 24px rgba(0,0,0,0.25);
+        backdrop-filter: blur(16px);
+        background: var(--glass);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-radius: 16px;
+        padding: 12px 16px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.25);
       }
-      .logo { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 18px; }
-      .nav-links { display: flex; gap: 18px; }
-      .nav-inner { position: relative; }
-      .nav-toggle { display: none; background: transparent; border: 0; padding: 8px 10px; cursor: pointer; border-radius: 10px; }
-      .nav-toggle .hamb-line { position: relative; display: block; width: 22px; height: 2px; background: #fff; }
-      .nav-toggle .hamb-line::before, .nav-toggle .hamb-line::after {
-        content: ""; position: absolute; left: 0; width: 22px; height: 2px; background: #fff; transition: transform 0.25s ease, opacity 0.2s ease, top 0.25s ease;
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 800;
+        font-size: 18px;
       }
-      .nav-toggle .hamb-line::before { top: -6px; }
-      .nav-toggle .hamb-line::after { top: 6px; }
-      .nav.is-open .nav-toggle .hamb-line { background: transparent; }
-      .nav.is-open .nav-toggle .hamb-line::before { top: 0; transform: rotate(45deg); }
-      .nav.is-open .nav-toggle .hamb-line::after { top: 0; transform: rotate(-45deg); }
+      .nav-links {
+        display: flex;
+        gap: 18px;
+      }
+      .nav-inner {
+        position: relative;
+      } /* para posicionar el dropdown */
+      .nav-toggle {
+        display: none; /* oculto en desktop */
+        background: transparent;
+        border: 0;
+        padding: 8px 10px;
+        cursor: pointer;
+        border-radius: 10px;
+      }
+      .nav-toggle .hamb-line {
+        position: relative;
+        display: block;
+        width: 22px;
+        height: 2px;
+        background: #fff;
+      }
+      .nav-toggle .hamb-line::before,
+      .nav-toggle .hamb-line::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        width: 22px;
+        height: 2px;
+        background: #fff;
+        transition:
+          transform 0.25s ease,
+          opacity 0.2s ease,
+          top 0.25s ease;
+      }
+      .nav-toggle .hamb-line::before {
+        top: -6px;
+      }
+      .nav-toggle .hamb-line::after {
+        top: 6px;
+      }
+      .nav.is-open .nav-toggle .hamb-line {
+        background: transparent;
+      }
+      .nav.is-open .nav-toggle .hamb-line::before {
+        top: 0;
+        transform: rotate(45deg);
+      }
+      .nav.is-open .nav-toggle .hamb-line::after {
+        top: 0;
+        transform: rotate(-45deg);
+      }
 
-      .nav-scrim { position: fixed; inset: 0; background: rgba(7,11,24,0.55); backdrop-filter: blur(2px); z-index: 40; }
+      /* scrim detrás del menú móvil */
+      .nav-scrim {
+        position: fixed;
+        inset: 0;
+        background: rgba(7, 11, 24, 0.55);
+        backdrop-filter: blur(2px);
+        z-index: 40; /* debajo de .nav (50) */
+      }
 
-      /* Mobile */
+      /* --- Mobile (<=768px) --- */
       @media (max-width: 768px) {
-        .nav-toggle { display: inline-flex; align-items: center; gap: 8px; }
-        .nav-links {
-          display: none; position: absolute; top: 100%; left: 0; right: 0; margin-top: 8px; padding: 12px; border-radius: 14px;
-          background: rgba(17,22,42,0.92); border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 10px 28px rgba(0,0,0,0.35);
-          flex-direction: column; gap: 10px; transform-origin: top center; animation: menuHide 0.2s ease forwards;
-          max-height: calc(100vh - 120px); overflow-y: auto;
+        .nav-toggle {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
         }
-        .nav.is-open .nav-links { display: flex; animation: menuShow 0.18s ease forwards; }
-        @keyframes menuShow { from { opacity: 0; transform: scaleY(0.96); } to { opacity: 1; transform: scaleY(1); } }
-        @keyframes menuHide { from { opacity: 1; transform: scaleY(1); } to { opacity: 0; transform: scaleY(0.96); } }
+        /* oculta links por defecto y los hace dropdown */
+        .nav-links {
+          display: none;
+          position: absolute;
+          top: 100%;
+          left: 0;
+          right: 0;
+          margin-top: 8px;
+          padding: 12px;
+          border-radius: 14px;
+          background: rgba(17, 22, 42, 0.92); /* más opaco para que no se mezcle */
+          border: 1px solid rgba(255, 255, 255, 0.12);
+          box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+          flex-direction: column;
+          gap: 10px;
+          transform-origin: top center;
+          animation: menuHide 0.2s ease forwards;
+          max-height: calc(100vh - 120px);
+          overflow-y: auto;
+        }
+        .nav.is-open .nav-links {
+          display: flex;
+          animation: menuShow 0.18s ease forwards;
+        }
+
+        @keyframes menuShow {
+          from {
+            opacity: 0;
+            transform: scaleY(0.96);
+          }
+          to {
+            opacity: 1;
+            transform: scaleY(1);
+          }
+        }
+        @keyframes menuHide {
+          from {
+            opacity: 1;
+            transform: scaleY(1);
+          }
+          to {
+            opacity: 0;
+            transform: scaleY(0.96);
+          }
+        }
       }
 
-      /* Logo animation */
-      .logo-atom { width: 32px; height: 32px; filter: drop-shadow(0 0 6px rgba(124, 58, 237, 0.35)); transform-origin: center; }
-      .logo-atom .orbit { animation: orbit 14s linear infinite; }
-      .logo-atom .orbit2 { animation: orbit 18s linear infinite reverse; }
-      .logo-atom .orbit3 { animation: orbit 22s linear infinite; }
-      .logo-atom .electron { animation: pulse 2.6s ease-in-out infinite; opacity: 0.7; }
-      @keyframes orbit { to { transform: rotate(360deg); } }
-      @keyframes pulse { 0%,100% { opacity: 0.55; } 50% { opacity: 0.9; filter: drop-shadow(0 0 6px rgba(124,58,237,0.6)); } }
+      /* Logo (animaciones del SVG) */
+      .logo-atom {
+        width: 32px;
+        height: 32px;
+        filter: drop-shadow(0 0 6px rgba(124, 58, 237, 0.35));
+        transform-origin: center;
+      }
+      .logo-atom .orbit {
+        animation: orbit 14s linear infinite;
+      }
+      .logo-atom .orbit2 {
+        animation: orbit 18s linear infinite reverse;
+      }
+      .logo-atom .orbit3 {
+        animation: orbit 22s linear infinite;
+      }
+      .logo-atom .electron {
+        animation: pulse 2.6s ease-in-out infinite;
+        opacity: 0.7;
+      }
+      @keyframes orbit {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 0.55;
+        }
+        50% {
+          opacity: 0.9;
+          filter: drop-shadow(0 0 6px rgba(124, 58, 237, 0.6));
+        }
+      }
 
       /* Buttons */
-      .btn { display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(90deg, var(--primary), #9333ea); color: white; padding: 12px 18px; border-radius: 14px; font-weight: 700; box-shadow: 0 10px 24px rgba(124,58,237,0.28); transition: transform 0.2s, box-shadow 0.2s; }
-      .btn:hover { transform: translateY(-2px); box-shadow: 0 14px 36px rgba(124,58,237,0.38); }
-      .btn-outline { background: transparent; border: 1px solid rgba(255,255,255,0.22); box-shadow: none; }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: linear-gradient(90deg, var(--primary), #9333ea);
+        color: white;
+        padding: 12px 18px;
+        border-radius: 14px;
+        font-weight: 700;
+        box-shadow: 0 10px 24px rgba(124, 58, 237, 0.28);
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+      }
+      .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 14px 36px rgba(124, 58, 237, 0.38);
+      }
+      .btn-outline {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 18px;
+        border-radius: 14px;
+        background: transparent;
+        border: 1px solid rgba(255, 255, 255, 0.22);
+        color: var(--text);
+        transition: border-color .2s, transform .2s;
+      }
+      .btn-outline:hover { transform: translateY(-2px); border-color: rgba(255,255,255,.4); }
 
       /* Hero */
-      header { scroll-margin-top: 90px; }
-      .hero { padding-top: 128px; padding-bottom: 72px; position: relative; text-align: center; }
-      .title { font-size: clamp(32px, 6vw, 56px); line-height: 1.08; font-weight: 800; margin: 0; }
-      .gradient-text { background: linear-gradient(90deg, #fff, #d6bcff 60%, #67e8f9); -webkit-background-clip: text; color: transparent; }
-      .subtitle { color: var(--muted); font-size: 18px; max-width: 680px; margin: 16px auto 0; }
-      .hero-cta { display: flex; gap: 12px; margin-top: 26px; justify-content: center; flex-wrap: wrap; }
-      .hero-cta .btn { margin-bottom: 14px; }
+      header {
+        scroll-margin-top: 90px;
+      }
+      .hero {
+        padding-top: 128px;
+        padding-bottom: 72px;
+        position: relative;
+        text-align: center;
+      }
+      .title {
+        font-size: clamp(32px, 6vw, 56px);
+        line-height: 1.08;
+        font-weight: 800;
+        margin: 0;
+      }
+      .gradient-text {
+        background: linear-gradient(90deg, #fff, #d6bcff 60%, #67e8f9);
+        -webkit-background-clip: text;
+        color: transparent;
+      }
+      .subtitle {
+        color: var(--muted);
+        font-size: 18px;
+        max-width: 680px;
+        margin: 16px auto 0;
+      }
+      .hero-cta {
+        display: flex;
+        gap: 12px;
+        margin-top: 26px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      .hero-cta .btn {
+        margin-bottom: 14px;
+      }
 
       /* Sections */
-      section { padding: 80px 0; border-top: 1px solid rgba(255, 255, 255, 0.08); scroll-margin-top: 90px; }
-      .section-head { text-align: center; margin-bottom: 36px; }
-      .h2 { font-size: clamp(26px, 4vw, 40px); margin: 8px 0; }
-      .h2:after { content: ""; display: block; height: 3px; width: 80px; margin: 12px auto 0; background: linear-gradient(90deg, var(--secondary), var(--primary)); border-radius: 999px; opacity: 0.9; }
-      .lead { color: var(--muted); max-width: 60ch; margin: 0 auto; }
+      section {
+        padding: 80px 0;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        scroll-margin-top: 90px;
+      }
+      .section-head {
+        text-align: center;
+        margin-bottom: 36px;
+      }
+      .h2 {
+        font-size: clamp(26px, 4vw, 40px);
+        margin: 8px 0;
+      }
+      .h2:after {
+        content: "";
+        display: block;
+        height: 3px;
+        width: 80px;
+        margin: 12px auto 0;
+        background: linear-gradient(90deg, var(--secondary), var(--primary));
+        border-radius: 999px;
+        opacity: 0.9;
+      }
+      .lead {
+        color: var(--muted);
+        max-width: 60ch;
+        margin: 0 auto;
+      }
 
-      .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 26px; margin-top: 42px; }
-      .card { background: var(--card); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 24px; text-align: center; transition: transform 0.25s, box-shadow 0.25s; }
-      .card:hover { transform: translateY(-6px); box-shadow: 0 16px 46px rgba(0, 0, 0, 0.35); }
-      .icon { font-size: 28px; margin-bottom: 10px; }
-      .muted { color: var(--muted); }
+      .grid-3 {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 26px;
+        margin-top: 42px;
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 16px;
+        padding: 24px;
+        text-align: center;
+        transition:
+          transform 0.25s,
+          box-shadow 0.25s;
+      }
+      .card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 16px 46px rgba(0, 0, 0, 0.35);
+      }
+      .icon {
+        font-size: 28px;
+        margin-bottom: 10px;
+      }
+      .muted {
+        color: var(--muted);
+      }
 
-      footer { text-align: center; padding: 70px 20px; border-top: 1px solid rgba(255, 255, 255, 0.08); color: var(--muted); }
+      footer {
+        text-align: center;
+        padding: 70px 20px;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        color: var(--muted);
+      }
 
       /* Inputs */
-      .input { width: 100%; padding: 14px 12px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.18); background: rgba(255, 255, 255, 0.05); color: var(--text); transition: border-color 0.2s, box-shadow 0.2s; }
-      .input:focus { border-color: var(--ring); outline: none; box-shadow: 0 0 0 4px var(--ring); }
+      .input {
+        width: 100%;
+        padding: 14px 12px;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--text);
+        transition:
+          border-color 0.2s,
+          box-shadow 0.2s;
+      }
+      .input:focus {
+        border-color: var(--ring);
+        outline: none;
+        box-shadow: 0 0 0 4px var(--ring);
+      }
 
       /* INTRO FULLSCREEN */
-      .intro { position: fixed; inset: 0; background: radial-gradient(1200px 700px at 80% -10%, rgba(124,58,237,0.18), transparent), radial-gradient(1200px 700px at 0% 100%, rgba(6,182,212,0.18), transparent), #070b18; z-index: 100; display: grid; place-items: center; perspective: 900px; will-change: opacity; }
-      .intro-stage { position: relative; width: 100vw; height: 100vh; }
-      #introCanvas { position: absolute; inset: 0; width: 100vw; height: 100vh; display: block; filter: none; outline: none; border: none; }
-      .intro-caption { position: absolute; left: 0; right: 0; bottom: 8%; display: grid; place-items: center; text-align: center; pointer-events: none; }
-      .intro-title { font-size: clamp(28px, 5vw, 44px); margin: 6px 0 0; background: linear-gradient(90deg, #fff, #cbb3ff 60%, #67e8f9); -webkit-background-clip: text; color: transparent; letter-spacing: 0.4px; text-shadow: 0 6px 26px rgba(124,58,237,0.18); }
-      .intro-sub { color: #b7c0d6; margin: 4px 0 0; }
-      .intro.hide { animation: introOut 0.6s ease forwards; }
-      @keyframes introOut { to { opacity: 0; transform: scale(0.98); visibility: hidden; } }
-      .skip-intro { position: absolute; right: 14px; top: 14px; z-index: 110; background: rgba(0,0,0,0.45); color: #fff; border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; padding: 8px 10px; font-weight: 600; cursor: pointer; }
+      .intro {
+        position: fixed;
+        inset: 0;
+        background: radial-gradient(
+            1200px 700px at 80% -10%,
+            rgba(124, 58, 237, 0.18),
+            transparent
+          ),
+          radial-gradient(
+            1200px 700px at 0% 100%,
+            rgba(6, 182, 212, 0.18),
+            transparent
+          ),
+          #070b18;
+        z-index: 100;
+        display: grid;
+        place-items: center;
+        perspective: 900px;
+        will-change: opacity;
+      }
+      .intro-stage {
+        position: relative;
+        width: 100vw;
+        height: 100vh;
+      }
+      #introCanvas {
+        position: absolute;
+        inset: 0;
+        width: 100vw;
+        height: 100vh;
+        display: block;
+        filter: none;
+        outline: none;
+        border: none;
+      }
+      .intro-caption {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 8%;
+        display: grid;
+        place-items: center;
+        text-align: center;
+        pointer-events: none;
+      }
+      .intro-title {
+        font-size: clamp(28px, 5vw, 44px);
+        margin: 6px 0 0;
+        background: linear-gradient(90deg, #fff, #cbb3ff 60%, #67e8f9);
+        -webkit-background-clip: text;
+        color: transparent;
+        letter-spacing: 0.4px;
+        text-shadow: 0 6px 26px rgba(124, 58, 237, 0.18);
+      }
+      .intro-sub {
+        color: #b7c0d6;
+        margin: 4px 0 0;
+      }
+      .intro.hide {
+        animation: introOut 0.6s ease forwards;
+      }
+      @keyframes introOut {
+        to {
+          opacity: 0;
+          transform: scale(0.98);
+          visibility: hidden;
+        }
+      }
+      .skip-intro {
+        position: absolute;
+        right: 14px;
+        top: 14px;
+        z-index: 110;
+        background: rgba(0, 0, 0, 0.45);
+        color: #fff;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 10px;
+        padding: 8px 10px;
+        font-weight: 600;
+        cursor: pointer;
+      }
 
       /* Testimonials */
-      .carousel { position: relative; overflow: hidden; padding-top: 12px; }
-      .carousel-track { display: flex; gap: 18px; will-change: transform; scrollbar-width: none; }
-      .carousel-track::-webkit-scrollbar { display: none; }
-      .slide { flex: 0 0 auto; min-width: clamp(280px, 32%, 360px); scroll-snap-align: start; text-align: left; }
-      .quote { margin: 0 0 12px 0; }
+      .carousel {
+        position: relative;
+        overflow: hidden;
+        padding-top: 12px;
+      }
+      .carousel-track {
+        display: flex;
+        gap: 18px;
+        will-change: transform;
+        scrollbar-width: none;
+      }
+      .carousel-track::-webkit-scrollbar {
+        display: none;
+      }
+      .slide {
+        flex: 0 0 auto;
+        min-width: clamp(280px, 32%, 360px);
+        scroll-snap-align: start;
+        text-align: left;
+      }
+      .quote {
+        margin: 0 0 12px 0;
+      }
+
+      /* Utility */
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
     </style>
   </head>
   <body>
@@ -197,7 +600,9 @@ const description =
     <!-- Intro animation -->
     <div class="intro" id="intro" aria-label="Intro animation">
       <div class="intro-stage">
-        <button class="skip-intro" id="skipIntro" aria-label="Skip intro">Skip</button>
+        <button class="skip-intro" id="skipIntro" aria-label="Skip intro"
+          >Skip</button
+        >
         <canvas id="introCanvas" aria-hidden="true"></canvas>
         <div class="intro-caption" aria-live="polite">
           <h1 class="intro-title">Solverive</h1>
@@ -205,14 +610,26 @@ const description =
         </div>
       </div>
     </div>
-    <noscript><style>.intro{display:none;}</style></noscript>
+    <noscript
+      ><style>
+        .intro {
+          display: none;
+        }
+      </style></noscript
+    >
 
     <!-- Nav -->
     <nav class="nav" aria-label="Primary">
       <div class="nav-inner">
         <div class="logo" aria-label="Solverive">
           <!-- SVG del átomo -->
-          <svg class="logo-atom" width="28" height="28" viewBox="0 0 84 84" aria-hidden="true">
+          <svg
+            class="logo-atom"
+            width="28"
+            height="28"
+            viewBox="0 0 84 84"
+            aria-hidden="true"
+          >
             <defs>
               <linearGradient id="lg" x1="0" y1="0" x2="1" y2="1">
                 <stop offset="0" stop-color="#06b6d4"></stop>
@@ -220,22 +637,68 @@ const description =
               </linearGradient>
               <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
                 <feGaussianBlur stdDeviation="1.5" result="b"></feGaussianBlur>
-                <feMerge><feMergeNode in="b"></feMergeNode><feMergeNode in="SourceGraphic"></feMergeNode></feMerge>
+                <feMerge>
+                  <feMergeNode in="b"></feMergeNode>
+                  <feMergeNode in="SourceGraphic"></feMergeNode>
+                </feMerge>
               </filter>
             </defs>
             <g filter="url(#glow)">
               <circle cx="42" cy="42" r="7" fill="url(#lg)"></circle>
-              <g class="orbit"><ellipse cx="42" cy="42" rx="24" ry="10" stroke="url(#lg)" stroke-width="2.5" opacity=".75" fill="none"></ellipse></g>
-              <g class="orbit2"><ellipse cx="42" cy="42" rx="10" ry="24" stroke="url(#lg)" stroke-width="2.5" opacity=".75" fill="none"></ellipse></g>
-              <g class="orbit3"><ellipse cx="42" cy="42" rx="18" ry="18" stroke="url(#lg)" stroke-width="2.5" opacity=".75" fill="none" transform="rotate(45 42 42)"></ellipse></g>
-              <circle class="electron" cx="66" cy="42" r="2.6" fill="#a78bfa" opacity=".7"></circle>
+              <g class="orbit">
+                <ellipse
+                  cx="42"
+                  cy="42"
+                  rx="24"
+                  ry="10"
+                  stroke="url(#lg)"
+                  stroke-width="2.5"
+                  opacity=".75"
+                  fill="none"></ellipse>
+              </g>
+              <g class="orbit2">
+                <ellipse
+                  cx="42"
+                  cy="42"
+                  rx="10"
+                  ry="24"
+                  stroke="url(#lg)"
+                  stroke-width="2.5"
+                  opacity=".75"
+                  fill="none"></ellipse>
+              </g>
+              <g class="orbit3">
+                <ellipse
+                  cx="42"
+                  cy="42"
+                  rx="18"
+                  ry="18"
+                  stroke="url(#lg)"
+                  stroke-width="2.5"
+                  opacity=".75"
+                  fill="none"
+                  transform="rotate(45 42 42)"></ellipse>
+              </g>
+              <circle
+                class="electron"
+                cx="66"
+                cy="42"
+                r="2.6"
+                fill="#a78bfa"
+                opacity=".7"></circle>
             </g>
           </svg>
           <span>Solverive</span>
         </div>
 
         <!-- Botón hamburguesa (oculto en desktop por CSS) -->
-        <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false" aria-controls="primary-links">
+        <button
+          class="nav-toggle"
+          id="navToggle"
+          aria-label="Open menu"
+          aria-expanded="false"
+          aria-controls="primary-links"
+        >
           <span class="hamb-line"></span>
         </button>
 
@@ -256,14 +719,18 @@ const description =
       <!-- Hero -->
       <header class="hero container">
         <h1 class="title">
-          Boost Your Business with <span class="gradient-text">Solverive AI</span>
+          <span class="gradient-text">Custom AI Chatbots</span> that help you<br />
+          <span class="gradient-text">solve & thrive</span>
         </h1>
         <p class="subtitle">
-          Solverive – Helping businesses solve & thrive. We build <strong>custom AI chatbots</strong> and automation that launch fast, scale safely, and deliver measurable impact.
+          Launch in days, not months. We build <strong>domain-tuned chatbots</strong> with your sources (FAQs, docs, CRM),
+          deploy to web/WhatsApp, and track impact from day one.
         </p>
         <div class="hero-cta">
-          <a href="#contact" class="btn" aria-label="Get started with Solverive">Get Started</a>
-          <a href="#services" class="btn btn-outline">Learn More</a>
+          <a href="#contact" class="btn" aria-label="Get started with Solverive"
+            >Get Started</a
+          >
+          <a href="#services" class="btn btn-outline">See How</a>
         </div>
       </header>
 
@@ -272,7 +739,7 @@ const description =
         <div class="section-head">
           <h2 id="services-title" class="h2">Our Services</h2>
           <p class="lead">
-            Tailored AI solutions that boost productivity and growth — even if your team is new to AI.
+            AI that works for your business — fast setup, accessible pricing, measurable outcomes.
           </p>
         </div>
         <div class="grid-3">
@@ -280,23 +747,26 @@ const description =
             <div class="icon">💬</div>
             <h3>Custom Chatbots</h3>
             <p class="muted">
-              Domain-tuned chatbots with your brand voice and sources (docs, web, CRM), deployed on web or WhatsApp.
+              Brand-voice chatbots using your knowledge base (RAG) with sources cited. Deploy on web, app or WhatsApp.
             </p>
           </div>
           <div class="card" aria-label="Automation">
             <div class="icon">⚙️</div>
-            <h3>Automation</h3>
+            <h3>AI Automation</h3>
             <p class="muted">
-              Streamline repetitive tasks like scheduling, reporting, and tier-1 support with smart workflows.
+              Automate tier-1 support, bookings, lead capture and follow-ups. Connect to Zapier/Make and your stack.
             </p>
           </div>
           <div class="card" aria-label="Advisory">
             <div class="icon">🤝</div>
             <h3>Advisory</h3>
             <p class="muted">
-              Clear roadmaps and governance to adopt AI safely and measure business outcomes.
+              Roadmaps and governance to adopt AI safely. We define KPIs so your team sees value quickly.
             </p>
           </div>
+        </div>
+        <div style="text-align:center;margin-top:28px">
+          <a href="#contact" class="btn">Start Your Free Demo</a>
         </div>
       </section>
 
@@ -305,63 +775,83 @@ const description =
         <div class="section-head">
           <h2 id="benefits-title" class="h2">Why Choose Solverive</h2>
           <p class="lead">
-            We combine technology and human creativity to deliver results that are practical, measurable, and aligned with your goals.
+            We focus on outcomes: speed to value, cost efficiency and real growth.
           </p>
         </div>
         <div class="grid-3">
           <div class="card">
-            <h3>Time to Value</h3>
+            <h3>🚀 Fast Deployment</h3>
             <p class="muted">
-              MVPs in days, not months — start seeing impact fast.
+              MVP chatbot live in <strong>72h</strong> so you capture value right away.
             </p>
           </div>
           <div class="card">
-            <h3>Real Growth</h3>
+            <h3>📉 Lower Support Load</h3>
             <p class="muted">
-              Acquire and retain more customers with data-driven AI.
+              Customers typically see <strong>~40% fewer tickets</strong> for repetitive questions.
             </p>
           </div>
           <div class="card">
-            <h3>Easy Adoption</h3>
+            <h3>📈 More Conversions</h3>
             <p class="muted">
-              Simple interfaces and guidance so your team thrives with AI.
+              Capture and qualify leads 24/7 with guided flows and handoff to human when needed.
             </p>
           </div>
         </div>
       </section>
 
       <!-- Testimonials -->
-      <section id="testimonials" class="container" aria-labelledby="testimonials-title">
+      <section
+        id="testimonials"
+        class="container"
+        aria-labelledby="testimonials-title"
+      >
         <div class="section-head">
           <h2 id="testimonials-title" class="h2">What Our Clients Say</h2>
         </div>
         <div class="carousel" aria-label="Testimonials carousel">
           <div class="carousel-track" id="carousel">
             <article class="slide card">
-              <p class="quote">“Solverive helped us automate daily tasks and we saved hours every week.”</p>
-              <div class="muted">— Small Business Owner</div>
+              <p class="quote">
+                “Solverive handled <strong>80% of WhatsApp reservations</strong> in our first week.”
+              </p>
+              <div class="muted">— Restaurant Owner</div>
             </article>
             <article class="slide card">
-              <p class="quote">“Our chatbot went live in days and reduced our support load significantly.”</p>
-              <div class="muted">— Customer Success Lead</div>
+              <p class="quote">
+                “Patients get instant answers. Booking is faster and our staff load
+                <strong>dropped significantly</strong>.”
+              </p>
+              <div class="muted">— Clinic Manager</div>
             </article>
             <article class="slide card">
-              <p class="quote">“Clear roadmap and quick wins. Our team adopted the tools in days.”</p>
+              <p class="quote">
+                “Support tickets were <strong>cut in half</strong>. The bot resolves FAQs and drives sales 24/7.”
+              </p>
+              <div class="muted">— E-commerce Director</div>
+            </article>
+            <article class="slide card">
+              <p class="quote">
+                “As an agency, we resell Solverive bots to our clients — <strong>fast delivery</strong>, zero dev.”
+              </p>
+              <div class="muted">— Marketing Agency Owner</div>
+            </article>
+            <article class="slide card">
+              <p class="quote">
+                “Clear roadmap and quick wins. Our team adopted the tools in days.”
+              </p>
               <div class="muted">— Operations Director</div>
             </article>
             <article class="slide card">
-              <p class="quote">“Personalized content doubled our engagement across social channels.”</p>
-              <div class="muted">— Content Strategist</div>
-            </article>
-            <article class="slide card">
-              <p class="quote">“They integrated with our stack seamlessly. Zero friction.”</p>
+              <p class="quote">
+                “They integrated with our stack seamlessly. Zero friction.”
+              </p>
               <div class="muted">— CTO, Startup</div>
             </article>
-            <article class="slide card">
-              <p class="quote">“Great partner: technical depth and human approach.”</p>
-              <div class="muted">— Agency Owner</div>
-            </article>
           </div>
+        </div>
+        <div style="text-align:center;margin-top:28px">
+          <a href="#contact" class="btn">Book a Demo</a>
         </div>
       </section>
 
@@ -369,27 +859,72 @@ const description =
       <section id="contact" class="container" aria-labelledby="contact-title">
         <div class="section-head">
           <h2 id="contact-title" class="h2">Let’s Work Together</h2>
+          <p class="lead">
+            Ready to start with AI? Contact us today — we’ll guide you step by step.
+          </p>
         </div>
         <div class="container-edge-safe" style="max-width:640px;margin:0 auto">
-          <form name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" class="card">
+          <form
+            name="contact"
+            method="POST"
+            data-netlify="true"
+            netlify-honeypot="bot-field"
+            class="card"
+          >
             <input type="hidden" name="form-name" value="contact" />
             <p class="hidden" style="display:none">
-              <label>Don’t fill this out if you’re human: <input name="bot-field" /></label>
+              <label
+                >Don’t fill this out if you’re human: <input
+                  name="bot-field"
+                /></label
+              >
             </p>
             <div style="display:grid;gap:14px">
-              <label><span class="sr-only">Your name</span><input name="name" required placeholder="Your name" class="input" autocomplete="name" /></label>
-              <label><span class="sr-only">Your email</span><input type="email" name="email" required placeholder="Your email" class="input" autocomplete="email" /></label>
-              <label><span class="sr-only">Message</span><textarea name="message" rows="4" placeholder="Tell us about your needs" class="input"></textarea></label>
+              <label>
+                <span class="sr-only">Your name</span>
+                <input
+                  name="name"
+                  required
+                  placeholder="Your name"
+                  class="input"
+                  autocomplete="name"
+                />
+              </label>
+              <label>
+                <span class="sr-only">Your email</span>
+                <input
+                  type="email"
+                  name="email"
+                  required
+                  placeholder="Your email"
+                  class="input"
+                  autocomplete="email"
+                />
+              </label>
+              <label>
+                <span class="sr-only">Message</span>
+                <textarea
+                  name="message"
+                  rows="4"
+                  placeholder="Tell us about your needs"
+                  class="input"></textarea>
+              </label>
               <button class="btn" style="justify-content:center">Send</button>
             </div>
           </form>
+          <div style="text-align:center;margin-top:18px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+            <!-- Reemplaza XXXXXXXXXXX por tu número en formato internacional -->
+            <a class="btn-outline" href="https://wa.me/5491165344775" aria-label="Chat on WhatsApp">Chat on WhatsApp</a>
+            <a class="btn-outline" href="#services">Explore Services</a>
+          </div>
         </div>
       </section>
+
       <ChatWidget client:idle />
     </main>
 
     <footer>
-      <p>© <span id="year"></span> Solverive. Helping businesses solve & thrive.</p>
+      <p>© <span id="year"></span> Solverive — Helping businesses solve & thrive.</p>
     </footer>
 
     <!-- Structured data -->
@@ -422,30 +957,34 @@ const description =
         const nav = document.querySelector(".nav");
         const toggle = document.getElementById("navToggle");
         const linksBox = document.getElementById("primary-links");
+        const scrim = document.getElementById("navScrim");
         if (!nav || !toggle || !linksBox) return;
 
         const mq = window.matchMedia("(max-width: 768px)");
 
         function openMenu() {
-          if (!mq.matches) return; // sólo en mobile
+          if (!mq.matches) return; // <-- sólo en mobile
           nav.classList.add("is-open");
           toggle.setAttribute("aria-expanded", "true");
           const firstLink = linksBox.querySelector("a");
           firstLink && firstLink.focus({ preventScroll: true });
+          scrim.hidden = false;
           document.addEventListener("keydown", escToClose);
-          document.addEventListener("click", clickOutside, { capture: true });
+          scrim.addEventListener("click", closeMenu, { capture: true });
         }
         function closeMenu() {
           nav.classList.remove("is-open");
           toggle.setAttribute("aria-expanded", "false");
+          scrim.hidden = true;
           document.removeEventListener("keydown", escToClose);
-          document.removeEventListener("click", clickOutside, { capture: true });
+          scrim.removeEventListener("click", closeMenu, { capture: true });
         }
-        function escToClose(e) { if (e.key === "Escape") closeMenu(); }
-        function clickOutside(e) { if (!nav.contains(e.target)) closeMenu(); }
+        function escToClose(e) {
+          if (e.key === "Escape") closeMenu();
+        }
 
         toggle.addEventListener("click", () => {
-          if (!mq.matches) return; // ignora clicks en desktop
+          if (!mq.matches) return; // <-- ignora clicks en desktop
           nav.classList.contains("is-open") ? closeMenu() : openMenu();
         });
 
@@ -453,7 +992,10 @@ const description =
           if (mq.matches && e.target.closest("a")) closeMenu();
         });
 
-        function syncMode() { if (!mq.matches) closeMenu(); }
+        // Si se pasa a desktop, asegúrate de cerrar
+        function syncMode() {
+          if (!mq.matches) closeMenu();
+        }
         mq.addEventListener?.("change", syncMode);
         window.addEventListener("resize", syncMode);
       })();
@@ -467,30 +1009,53 @@ const description =
         if (!track) return;
         const originals = Array.from(track.children);
         originals.forEach((s) => track.appendChild(s.cloneNode(true))); // loop
-        let index = 0, timer, active = false;
-        const intervalMs = 3000, transitionMs = 600;
+        let index = 0,
+          timer,
+          active = false;
+        const intervalMs = 3000,
+          transitionMs = 600;
         const gap = () => parseFloat(getComputedStyle(track).gap) || 0;
-        const step = () => track.children[0].getBoundingClientRect().width + gap();
+        const step = () =>
+          track.children[0].getBoundingClientRect().width + gap();
         function goTo(i, animate = true) {
-          track.style.transition = animate ? `transform ${transitionMs}ms ease` : "none";
+          track.style.transition = animate
+            ? `transform ${transitionMs}ms ease`
+            : "none";
           track.style.transform = `translateX(${-i * step()}px)`;
         }
         function next() {
           if (!active) return;
-          index++; goTo(index, true);
+          index++;
+          goTo(index, true);
           if (index >= originals.length) {
-            setTimeout(() => { index = 0; goTo(index, false); }, transitionMs + 20);
+            setTimeout(() => {
+              index = 0;
+              goTo(index, false);
+            }, transitionMs + 20);
           }
         }
-        const start = () => { if (!active) { active = true; timer = setInterval(next, intervalMs); } };
-        const stop = () => { active = false; clearInterval(timer); };
+        const start = () => {
+          if (!active) {
+            active = true;
+            timer = setInterval(next, intervalMs);
+          }
+        };
+        const stop = () => {
+          active = false;
+          clearInterval(timer);
+        };
         track.addEventListener("mouseenter", stop);
         track.addEventListener("mouseleave", start);
         track.addEventListener("touchstart", stop, { passive: true });
         track.addEventListener("touchend", start);
 
         const obs = new IntersectionObserver(
-          (entries) => entries.forEach((e) => { if (e.isIntersecting) start(); else stop(); }),
+          (entries) => {
+            entries.forEach((e) => {
+              if (e.isIntersecting) start();
+              else stop();
+            });
+          },
           { threshold: 0.2 }
         );
         obs.observe(track);
@@ -499,7 +1064,9 @@ const description =
         goTo(0, false);
 
         if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-          stop(); track.style.transition = "none"; track.style.transform = "none";
+          stop();
+          track.style.transition = "none";
+          track.style.transform = "none";
         }
       })();
 
@@ -513,70 +1080,134 @@ const description =
 
         function resizeCanvas() {
           const dpr = Math.max(1, window.devicePixelRatio || 1);
-          const cssW = window.innerWidth, cssH = window.innerHeight;
+          const cssW = window.innerWidth,
+            cssH = window.innerHeight;
           canvas.width = Math.floor(cssW * dpr);
           canvas.height = Math.floor(cssH * dpr);
-          canvas.style.width = "100vw"; canvas.style.height = "100vh";
+          canvas.style.width = "100vw";
+          canvas.style.height = "100vh";
           ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         }
         resizeCanvas();
         window.addEventListener("resize", resizeCanvas);
 
-        let t = 0; const fov = 420;
+        let t = 0;
+        const fov = 420;
         let phase = "galaxy";
-        const galaxyDuration = 900, expandDuration = 900, fadeDuration = 600;
-        let phaseStart = performance.now(); let canceled = false;
+        const galaxyDuration = 900,
+          expandDuration = 900,
+          fadeDuration = 600;
+        let phaseStart = performance.now();
+        let canceled = false;
 
         const parts = [];
         for (let i = 0; i < 220; i++) {
-          const radius = 40 + Math.random() * 210, angle = Math.random() * Math.PI * 2, height = (Math.random() - 0.5) * 70;
-          parts.push({ x: Math.cos(angle) * radius, y: height, z: Math.sin(angle) * radius, hue: i % 2 ? 200 : 280, alpha: 0.6 + 0.25 * Math.random() });
+          const radius = 40 + Math.random() * 210,
+            angle = Math.random() * Math.PI * 2,
+            height = (Math.random() - 0.5) * 70;
+          parts.push({
+            x: Math.cos(angle) * radius,
+            y: height,
+            z: Math.sin(angle) * radius,
+            hue: i % 2 ? 200 : 280,
+            alpha: 0.6 + 0.25 * Math.random(),
+          });
         }
 
-        function size() { const W = canvas.clientWidth, H = canvas.clientHeight; return { W, H, cx: W / 2, cy: H / 2 }; }
-        const project = (p, s) => { const z = p.z + 300, sc = fov / (fov + z); return { x: s.cx + p.x * sc, y: s.cy + p.y * sc, s: sc }; };
+        function size() {
+          const W = canvas.clientWidth,
+            H = canvas.clientHeight;
+          return { W, H, cx: W / 2, cy: H / 2 };
+        }
+        const project = (p, s) => {
+          const z = p.z + 300,
+            sc = fov / (fov + z);
+          return { x: s.cx + p.x * sc, y: s.cy + p.y * sc, s: sc };
+        };
         const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
 
         function drawGalaxy(s) {
-          ctx.fillStyle = "rgba(7,11,24,.45)"; ctx.fillRect(0, 0, s.W, s.H);
-          ctx.save(); ctx.strokeStyle = "rgba(167,139,250,.14)"; ctx.lineWidth = 1; ctx.beginPath();
+          ctx.fillStyle = "rgba(7,11,24,.45)";
+          ctx.fillRect(0, 0, s.W, s.H);
+          ctx.save();
+          ctx.strokeStyle = "rgba(167,139,250,.14)";
+          ctx.lineWidth = 1;
+          ctx.beginPath();
           for (let a = 0; a < Math.PI * 2; a += 0.025) {
-            const q = project({ x: Math.cos(a) * 160, y: Math.sin(a) * 40, z: Math.sin(a) * 160 }, s);
-            if (a === 0) ctx.moveTo(q.x, q.y); else ctx.lineTo(q.x, q.y);
+            const q = project(
+              {
+                x: Math.cos(a) * 160,
+                y: Math.sin(a) * 40,
+                z: Math.sin(a) * 160,
+              },
+              s
+            );
+            if (a === 0) ctx.moveTo(q.x, q.y);
+            else ctx.lineTo(q.x, q.y);
           }
-          ctx.stroke(); ctx.restore();
+          ctx.stroke();
+          ctx.restore();
           const n = project({ x: 0, y: 0, z: 0 }, s);
           const g = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, 26);
-          g.addColorStop(0, "rgba(255,255,255,.9)"); g.addColorStop(1, "rgba(124,58,237,.1)");
-          ctx.fillStyle = g; ctx.beginPath();
-          ctx.arc(n.x, n.y, 10 * n.s + 1.2 * Math.sin(t * 0.12), 0, Math.PI * 2); ctx.fill();
+          g.addColorStop(0, "rgba(255,255,255,.9)");
+          g.addColorStop(1, "rgba(124,58,237,.1)");
+          ctx.fillStyle = g;
+          ctx.beginPath();
+          ctx.arc(
+            n.x,
+            n.y,
+            10 * n.s + 1.2 * Math.sin(t * 0.12),
+            0,
+            Math.PI * 2
+          );
+          ctx.fill();
           ctx.globalCompositeOperation = "lighter";
           for (const p of parts) {
-            const ang = Math.atan2(p.z, p.x) + 0.006, r = Math.hypot(p.x, p.z);
-            p.x = Math.cos(ang) * r; p.z = Math.sin(ang) * r;
+            const ang = Math.atan2(p.z, p.x) + 0.006,
+              r = Math.hypot(p.x, p.z);
+            p.x = Math.cos(ang) * r;
+            p.z = Math.sin(ang) * r;
             p.y += Math.sin(t * 0.01 + p.x * 0.01) * 0.04;
-            const q = project(p, s); const rr = 1 * q.s * 2;
-            ctx.beginPath(); ctx.fillStyle = `hsla(${p.hue},80%,70%,${p.alpha})`;
-            ctx.shadowBlur = 10; ctx.shadowColor = "rgba(124,58,237,.45)";
-            ctx.arc(q.x, q.y, rr, 0, Math.PI * 2); ctx.fill();
+            const q = project(p, s);
+            const rr = 1 * q.s * 2;
+            ctx.beginPath();
+            ctx.fillStyle = `hsla(${p.hue},80%,70%,${p.alpha})`;
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = "rgba(124,58,237,.45)";
+            ctx.arc(q.x, q.y, rr, 0, Math.PI * 2);
+            ctx.fill();
           }
-          ctx.globalCompositeOperation = "source-over"; ctx.shadowBlur = 0;
+          ctx.globalCompositeOperation = "source-over";
+          ctx.shadowBlur = 0;
           return n;
         }
 
         function drawBang(center, s, progress) {
-          ctx.fillStyle = "#070b18"; ctx.fillRect(0, 0, s.W, s.H);
-          const maxR = Math.hypot(s.W, s.H), r = 8 + easeOutCubic(progress) * maxR;
-          const g = ctx.createRadialGradient(center.x, center.y, 0, center.x, center.y, Math.max(1, r));
+          ctx.fillStyle = "#070b18";
+          ctx.fillRect(0, 0, s.W, s.H);
+          const maxR = Math.hypot(s.W, s.H),
+            r = 8 + easeOutCubic(progress) * maxR;
+          const g = ctx.createRadialGradient(
+            center.x,
+            center.y,
+            0,
+            center.x,
+            center.y,
+            Math.max(1, r)
+          );
           g.addColorStop(0, "rgba(255,255,255,0.95)");
           g.addColorStop(0.22, "rgba(199,167,255,0.70)");
           g.addColorStop(0.55, "rgba(124,58,237,0.35)");
           g.addColorStop(1, "rgba(124,58,237,0.0)");
-          ctx.fillStyle = g; ctx.beginPath(); ctx.rect(0, 0, s.W, s.H); ctx.fill();
+          ctx.fillStyle = g;
+          ctx.beginPath();
+          ctx.rect(0, 0, s.W, s.H);
+          ctx.fill();
         }
 
         function endIntro() {
-          canceled = true; overlay.classList.add("hide");
+          canceled = true;
+          overlay.classList.add("hide");
           setTimeout(() => overlay.remove(), 650);
         }
         skipBtn.addEventListener("click", endIntro);
@@ -584,29 +1215,47 @@ const description =
 
         function loop(now) {
           if (canceled) return;
-          const s = size(); const elapsed = now - phaseStart;
+          const s = size();
+          const elapsed = now - phaseStart;
 
           if (phase === "galaxy") {
-            const nucleus = drawGalaxy(s); t++;
-            if (elapsed >= galaxyDuration) { phase = "bang"; phaseStart = now; loop.nucleus = nucleus; }
-            requestAnimationFrame(loop); return;
+            const nucleus = drawGalaxy(s);
+            t++;
+            if (elapsed >= galaxyDuration) {
+              phase = "bang";
+              phaseStart = now;
+              loop.nucleus = nucleus;
+            }
+            requestAnimationFrame(loop);
+            return;
           }
           if (phase === "bang") {
             const prog = Math.min(1, elapsed / expandDuration);
             drawBang(loop.nucleus || { x: s.cx, y: s.cy }, s, prog);
-            if (prog < 1) requestAnimationFrame(loop);
-            else { phase = "fade"; phaseStart = now; requestAnimationFrame(loop); }
+            if (prog < 1) {
+              requestAnimationFrame(loop);
+            } else {
+              phase = "fade";
+              phaseStart = now;
+              requestAnimationFrame(loop);
+            }
             return;
           }
           if (phase === "fade") {
             const prog = Math.min(1, elapsed / fadeDuration);
             overlay.style.opacity = String(1 - prog);
-            if (prog < 1) requestAnimationFrame(loop);
-            else endIntro();
+            if (prog < 1) {
+              requestAnimationFrame(loop);
+            } else {
+              endIntro();
+            }
           }
         }
 
-        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) { endIntro(); return; }
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+          endIntro();
+          return;
+        }
         requestAnimationFrame(loop);
       })();
 
