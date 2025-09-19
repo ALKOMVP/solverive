@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <!-- Background gradient -->
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0A1C2E"/>
+      <stop offset="100%" stop-color="#0B1E33"/>
+    </linearGradient>
+
+    <!-- Large planet gradient -->
+    <linearGradient id="planet" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#34D2F4"/>
+      <stop offset="50%" stop-color="#46A6FF"/>
+      <stop offset="100%" stop-color="#8A3DFF"/>
+    </linearGradient>
+
+    <!-- Small moon gradient -->
+    <linearGradient id="moon" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#9A52FF"/>
+      <stop offset="100%" stop-color="#6A79FF"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1024" height="1024" fill="url(#bg)"/>
+
+  <!-- Orbit dots (cyan) -->
+  <circle cx="260" cy="610" r="8" fill="#3CD4E7"/>
+  <circle cx="300" cy="560" r="8" fill="#3CD4E7"/>
+  <circle cx="740" cy="560" r="8" fill="#3CD4E7"/>
+  <circle cx="780" cy="610" r="8" fill="#3CD4E7"/>
+
+  <!-- Large planet -->
+  <circle cx="470" cy="610" r="260" fill="url(#planet)"/>
+
+  <!-- White dotted midline -->
+  <circle cx="320" cy="600" r="8" fill="#FFFFFF"/>
+  <circle cx="370" cy="610" r="8" fill="#FFFFFF"/>
+  <circle cx="420" cy="615" r="8" fill="#FFFFFF"/>
+  <circle cx="470" cy="620" r="8" fill="#FFFFFF"/>
+  <circle cx="520" cy="615" r="8" fill="#FFFFFF"/>
+  <circle cx="570" cy="610" r="8" fill="#FFFFFF"/>
+  <circle cx="620" cy="605" r="8" fill="#FFFFFF"/>
+
+  <!-- Small moon -->
+  <circle cx="760" cy="420" r="72" fill="url(#moon)"/>
+</svg>
