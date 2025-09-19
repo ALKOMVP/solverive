@@ -71,7 +71,7 @@ export const onRequestPost: PagesFunction<Env> = async (ctx) => {
         returnMetadata: true,
         includeVectors: false,
         returnValues: false,
-        filter: { type: "faq" }, // solo FAQs
+        // filter: { type: "faq" }, // solo FAQs
       });
 
       matches = (res?.matches ?? []).sort(
