@@ -1,1268 +1,1021 @@
----
-import "../styles/global.css";
-import Header from "../components/Header.astro";
-import ChatWidget from "../components/ChatWidget.jsx";
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Solverive - Simplifica tus reservas</title>
 
-const title =
-  "Solverive – Custom AI Chatbots & Automation for Businesses";
-const description =
-  "Solverive helps businesses solve & thrive with AI: custom chatbots, automation and advisory. Launch fast, scale safely, measure impact.";
----
+  <!-- Tipografía -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --text-main: #111111;
+      --text-soft: #555555;
+      --accent: #4b5bff;
+      --accent-soft: #eef0ff;
+      --card-radius: 18px;
+      --shadow-soft: 0 18px 40px rgba(0,0,0,0.08);
+    }
 
-    <title>{title}</title>
-    <meta name="description" content={description} />
-    <link rel="canonical" href="https://solverive.com/" />
-    <link rel="icon" href="/favicon.ico" sizes="any">
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    * {
+      box-sizing: border-box;
+    }
 
-    <!-- SEO / Social -->
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://solverive.com/" />
-    <meta property="og:title" content="Solverive – Helping businesses solve & thrive" />
-    <meta property="og:description" content={description} />
-    <meta property="og:image" content="https://solverive.com/og-image.jpg" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Solverive – Helping businesses solve & thrive" />
-    <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content="https://solverive.com/og-image.jpg" />
-    <meta name="robots" content="index,follow" />
+    /* scroll suave en toda la página */
+    html {
+      scroll-behavior: smooth;
+    }
 
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    body {
+      margin: 0;
+      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--text-main);
+      background:
+        radial-gradient(circle at 75% 18%, #dff0ff 0, rgba(223,240,255,0.9) 26%, rgba(223,240,255,0) 60%),
+        radial-gradient(circle at 18% 80%, #ffe7bf 0, rgba(255,231,191,0.9) 20%, rgba(255,231,191,0) 55%),
+        radial-gradient(circle at 78% 82%, #e7ffd0 0, rgba(231,255,208,0.9) 22%, rgba(231,255,208,0) 55%),
+        #ffffff;
+      background-attachment: fixed;
+      line-height: 1.5;
+    }
 
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap"
-      rel="stylesheet"
-    />
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
 
-    <style>
-      :root {
-        --bg: #0b1020;
-        --bg-alt: #0f1530;
-        --primary: #7c3aed;
-        --secondary: #06b6d4;
-        --text: #e5e7eb;
-        --muted: #b2b7c3;
-        --card: #11162a;
-        --glass: rgba(255, 255, 255, 0.06);
-        --ring: rgba(124, 58, 237, 0.35);
+    /* CONTENEDOR GENERAL */
 
-        --nav-glass-bg: linear-gradient(
-          180deg,
-          rgba(17, 22, 42, 0.78),
-          rgba(17, 22, 42, 0.58)
-        );
-        --nav-border-grad: linear-gradient(
-          180deg,
-          rgba(255, 255, 255, 0.18),
-          rgba(255, 255, 255, 0.08)
-        );
-      }
-      * {
-        box-sizing: border-box;
-      }
-      html:focus-within {
-        scroll-behavior: smooth;
-      }
-      body {
-        margin: 0;
-        font-family:
-          Inter,
-          system-ui,
-          -apple-system,
-          Segoe UI,
-          Roboto,
-          Ubuntu,
-          Cantarell;
-        line-height: 1.6;
-        color: var(--text);
-        background: radial-gradient(
-            900px 500px at 90% -10%,
-            rgba(124, 58, 237, 0.18),
-            transparent
-          ),
-          radial-gradient(
-            800px 500px at 10% 0%,
-            rgba(6, 182, 212, 0.14),
-            transparent
-          ),
-          linear-gradient(180deg, var(--bg), var(--bg-alt));
-        overflow-x: hidden;
-        -webkit-font-smoothing: antialiased;
-        text-rendering: optimizeLegibility;
-      }
-      a {
-        color: inherit;
-        text-decoration: none;
-      }
-      .container {
-        max-width: 1100px;
-        margin: 0 auto;
-        padding-inline: 28px;
-      }
-      @media (min-width: 768px) {
-        .container {
-          padding-inline: 40px;
-        }
-      }
-      .container-edge-safe {
-        padding-inline: max(28px, env(safe-area-inset-left));
-      }
+    .page {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 0 24px 72px;
+    }
 
-      /* Skip link */
-      .skip-link {
-        position: absolute;
-        left: -999px;
-        top: auto;
-        width: 1px;
-        height: 1px;
-        overflow: hidden;
-      }
-      .skip-link:focus {
-        left: 16px;
-        top: 12px;
-        width: auto;
-        height: auto;
-        z-index: 1000;
-        background: #11162a;
-        color: white;
-        padding: 10px 14px;
-        border-radius: 10px;
-        outline: 2px solid #a78bfa;
-      }
+    /* HEADER */
 
-      /* Nav */
-      .nav {
-        position: fixed;
-        background: transparent;
-        top: 12px;
-        left: 50%;
-        transform: translateX(-50%);
-        z-index: 50;
-        width: min(1100px, 92%);
-        border-radius: 16px;
-      }
-      .nav-inner {
-        backdrop-filter: blur(16px);
-        background: var(--glass);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-radius: 16px;
-        padding: 12px 16px;
-        border: 1px solid rgba(255, 255, 255, 0.12);
-        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.25);
-      }
-      .logo {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-weight: 800;
-        font-size: 18px;
-      }
-      .nav-links {
-        display: flex;
-        gap: 18px;
-      }
-      .nav-inner {
-        position: relative;
-      } /* para posicionar el dropdown */
-      .nav-toggle {
-        display: none; /* oculto en desktop */
-        background: transparent;
-        border: 0;
-        padding: 8px 10px;
-        cursor: pointer;
-        border-radius: 10px;
-      }
-      .nav-toggle .hamb-line {
-        position: relative;
-        display: block;
-        width: 22px;
-        height: 2px;
-        background: #fff;
-      }
-      .nav-toggle .hamb-line::before,
-      .nav-toggle .hamb-line::after {
-        content: "";
-        position: absolute;
-        left: 0;
-        width: 22px;
-        height: 2px;
-        background: #fff;
-        transition:
-          transform 0.25s ease,
-          opacity 0.2s ease,
-          top 0.25s ease;
-      }
-      .nav-toggle .hamb-line::before {
-        top: -6px;
-      }
-      .nav-toggle .hamb-line::after {
-        top: 6px;
-      }
-      .nav.is-open .nav-toggle .hamb-line {
-        background: transparent;
-      }
-      .nav.is-open .nav-toggle .hamb-line::before {
-        top: 0;
-        transform: rotate(45deg);
-      }
-      .nav.is-open .nav-toggle .hamb-line::after {
-        top: 0;
-        transform: rotate(-45deg);
-      }
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      backdrop-filter: blur(16px);
+      background: rgba(252,252,252,0.88);
+      border-bottom: 1px solid rgba(0,0,0,0.03);
+    }
 
-      /* scrim detrás del menú móvil */
-      .nav-scrim {
-        position: fixed;
-        inset: 0;
-        background: rgba(7, 11, 24, 0.55);
-        backdrop-filter: blur(2px);
-        z-index: 40; /* debajo de .nav (50) */
-      }
+    .header-inner {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
 
-      /* --- Mobile (<=768px) --- */
-      @media (max-width: 768px) {
-        .nav-toggle {
-          display: inline-flex;
-          align-items: center;
-          gap: 8px;
-        }
-        /* oculta links por defecto y los hace dropdown */
-        .nav-links {
-          display: none;
-          position: absolute;
-          top: 100%;
-          left: 0;
-          right: 0;
-          margin-top: 8px;
-          padding: 12px;
-          border-radius: 14px;
-          background: rgba(17, 22, 42, 0.92); /* más opaco para que no se mezcle */
-          border: 1px solid rgba(255, 255, 255, 0.12);
-          box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
-          flex-direction: column;
-          gap: 10px;
-          transform-origin: top center;
-          animation: menuHide 0.2s ease forwards;
-          max-height: calc(100vh - 120px);
-          overflow-y: auto;
-        }
-        .nav.is-open .nav-links {
-          display: flex;
-          animation: menuShow 0.18s ease forwards;
-        }
+    .logo {
+      font-weight: 700;
+      font-size: 20px;
+      letter-spacing: 0.02em;
+    }
 
-        @keyframes menuShow {
-          from {
-            opacity: 0;
-            transform: scaleY(0.96);
-          }
-          to {
-            opacity: 1;
-            transform: scaleY(1);
-          }
-        }
-        @keyframes menuHide {
-          from {
-            opacity: 1;
-            transform: scaleY(1);
-          }
-          to {
-            opacity: 0;
-            transform: scaleY(0.96);
-          }
-        }
-      }
+    .nav {
+      display: flex;
+      gap: 28px;
+      font-size: 14px;
+    }
 
-      /* Logo (animaciones del SVG) */
-      .logo-atom {
-        width: 32px;
-        height: 32px;
-        filter: drop-shadow(0 0 6px rgba(124, 58, 237, 0.35));
-        transform-origin: center;
-      }
-      .logo-atom .orbit {
-        animation: orbit 14s linear infinite;
-      }
-      .logo-atom .orbit2 {
-        animation: orbit 18s linear infinite reverse;
-      }
-      .logo-atom .orbit3 {
-        animation: orbit 22s linear infinite;
-      }
-      .logo-atom .electron {
-        animation: pulse 2.6s ease-in-out infinite;
-        opacity: 0.7;
-      }
-      @keyframes orbit {
-        to {
-          transform: rotate(360deg);
-        }
-      }
-      @keyframes pulse {
-        0%,
-        100% {
-          opacity: 0.55;
-        }
-        50% {
-          opacity: 0.9;
-          filter: drop-shadow(0 0 6px rgba(124, 58, 237, 0.6));
-        }
-      }
+    .nav a {
+      color: #222;
+      font-weight: 500;
+    }
 
-      /* Buttons */
-      .btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        background: linear-gradient(90deg, var(--primary), #9333ea);
-        color: white;
-        padding: 12px 18px;
-        border-radius: 14px;
-        font-weight: 700;
-        box-shadow: 0 10px 24px rgba(124, 58, 237, 0.28);
-        transition:
-          transform 0.2s,
-          box-shadow 0.2s;
-      }
-      .btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 14px 36px rgba(124, 58, 237, 0.38);
-      }
-      .btn-outline {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 12px 18px;
-        border-radius: 14px;
-        background: transparent;
-        border: 1px solid rgba(255, 255, 255, 0.22);
-        color: var(--text);
-        transition: border-color .2s, transform .2s;
-      }
-      .btn-outline:hover { transform: translateY(-2px); border-color: rgba(255,255,255,.4); }
+    /* HERO */
 
-      /* Hero */
-      header {
-        scroll-margin-top: 90px;
-      }
+    .hero {
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+      gap: 56px;
+      padding-top: 80px;
+      padding-bottom: 56px;
+      align-items: center;
+    }
+
+    .hero-title {
+      font-size: 60px;
+      line-height: 1.03;
+      letter-spacing: -0.04em;
+      margin-bottom: 20px;
+    }
+
+    .hero-text {
+      font-size: 16px;
+      color: var(--text-soft);
+      max-width: 420px;
+      margin-bottom: 30px;
+    }
+
+    .hero-primary-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 13px 26px;
+      border-radius: 999px;
+      background: var(--accent);
+      color: white;
+      font-weight: 600;
+      font-size: 14px;
+      box-shadow: 0 12px 28px rgba(75,91,255,0.32);
+    }
+
+    .hero-right {
+      display: flex;
+      justify-content: center;
+      position: relative;
+    }
+
+    .hero-avatar-wrapper {
+      position: relative;
+      width: 340px;
+      height: 340px;
+    }
+
+    .hero-halo {
+      position: absolute;
+      inset: 0;
+      border-radius: 999px;
+      background:
+        radial-gradient(circle at 20% 20%, #ffeec8 0, #ffeec8 15%, transparent 60%),
+        radial-gradient(circle at 70% 80%, #b0f4ff 0, #b0f4ff 18%, transparent 62%),
+        radial-gradient(circle at 50% 50%, #f4ffcf 0, #f4ffcf 30%, transparent 70%);
+      filter: blur(1px);
+    }
+
+    .hero-avatar-img {
+      position: absolute;
+      inset: 24px;
+      border-radius: 999px;
+      overflow: hidden;
+      box-shadow: 0 22px 46px rgba(0,0,0,0.2);
+    }
+
+    .hero-avatar-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .hero-badge {
+      position: absolute;
+      left: 12px;
+      bottom: 28px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 14px;
+      border-radius: 999px;
+      background: white;
+      box-shadow: 0 10px 26px rgba(0,0,0,0.16);
+      font-size: 12px;
+    }
+
+    .hero-badge-icon {
+      width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      background: #21c16b;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .hero-bubble {
+      position: absolute;
+      right: -4px;
+      top: 18px;
+      padding: 10px 16px;
+      border-radius: 999px;
+      background: #335dff;
+      color: white;
+      font-size: 12px;
+      box-shadow: 0 14px 32px rgba(0,0,0,0.25);
+      max-width: 210px;
+    }
+
+    /* SECCIÓN SERVICIOS */
+
+    #servicios {
+      position: relative;
+      padding-top: 80px;
+      padding-bottom: 120px;
+    }
+
+    #servicios::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 60%;
+      width: 180px;
+      height: 180px;
+      border-left: 4px solid #c8c8c8;
+      border-top: 4px solid #c8c8c8;
+      transform: translateY(-40%);
+    }
+
+    #servicios .section-title {
+      font-size: 44px;
+      letter-spacing: -0.06em;
+      margin-bottom: 40px;
+    }
+
+    .services-layout {
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 64px;
+      align-items: flex-start;
+      margin-top: -8px;
+    }
+
+    .services-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      font-size: 15px;
+    }
+
+    .service-item h3 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .service-item p {
+      margin: 0;
+      color: var(--text-soft);
+      max-width: 420px;
+    }
+
+    .service-item + .service-item {
+      margin-top: 22px;
+      padding-top: 18px;
+      border-top: 1px solid #111111;
+    }
+
+    .services-cta {
+      margin-top: 26px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-block;
+      text-decoration: none;
+    }
+
+    .services-cta:hover {
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    /* PLAN */
+
+    .plan-card-wrapper {
+      display: flex;
+      justify-content: center;
+      margin-top: 28px;
+    }
+
+    .plan-card {
+      width: 100%;
+      max-width: 780px;
+      background: #ffffff;
+      border-radius: 26px;
+      box-shadow: 0 26px 60px rgba(0, 0, 0, 0.16);
+      padding: 36px 40px 32px;
+      border: 1px solid rgba(0, 0, 0, 0.04);
+    }
+
+    .plan-header {
+      margin-bottom: 18px;
+    }
+
+    .plan-header h3 {
+      margin: 0 0 6px;
+      font-size: 24px;
+      letter-spacing: -0.02em;
+    }
+
+    .plan-header p {
+      margin: 0;
+      font-size: 14px;
+      color: var(--text-soft);
+    }
+
+    .plan-price {
+      font-size: 40px;
+      font-weight: 700;
+      margin-top: 12px;
+      margin-bottom: 4px;
+    }
+
+    .plan-period {
+      font-size: 13px;
+      color: var(--text-soft);
+    }
+
+    .plan-content {
+      display: grid;
+      grid-template-columns: minmax(0, 1.5fr) auto;
+      align-items: flex-end;
+      gap: 32px;
+      margin-top: 18px;
+    }
+
+    .plan-features {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    .plan-features li::before {
+      content: "✓";
+      margin-right: 8px;
+      color: #111;
+      font-weight: 600;
+    }
+
+    .plan-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 13px 26px;
+      font-size: 15px;
+      font-weight: 600;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      background: var(--accent);
+      color: white;
+      box-shadow: 0 16px 36px rgba(75, 91, 255, 0.35);
+      white-space: nowrap;
+    }
+
+    /* POR QUÉ ELEGIRNOS */
+
+    .why-section {
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.3fr);
+      column-gap: 80px;
+      align-items: flex-start;
+      padding-top: 120px;
+      padding-bottom: 160px;
+    }
+
+    .why-title {
+      font-size: 48px;
+      line-height: 1.02;
+      margin-bottom: 16px;
+      letter-spacing: -0.06em;
+    }
+
+    .why-text {
+      font-size: 15px;
+      color: var(--text-soft);
+      margin-bottom: 18px;
+      max-width: 480px;
+    }
+
+    .why-benefits {
+      padding-left: 18px;
+      font-size: 14px;
+      margin: 0;
+    }
+
+    .why-right {
+      position: relative;
+      min-height: 360px;
+      margin-top: 60px;
+    }
+
+    /* círculo doctora */
+
+    .doctor-wrapper {
+      position: absolute;
+      left: 130px;
+      bottom: -40px;
+      width: 340px;
+      height: 340px;
+      z-index: 2;
+    }
+
+    .doctor-halo {
+      position: absolute;
+      inset: 0;
+      border-radius: 999px;
+      background:
+        radial-gradient(circle at 15% 15%, #ffe0b9 0, #ffe0b9 22%, transparent 55%),
+        radial-gradient(circle at 80% 80%, #c7f4ff 0, #c7f4ff 28%, transparent 65%),
+        radial-gradient(circle at 50% 50%, #e1ffbd 0, #e1ffbd 40%, transparent 78%);
+    }
+
+    .doctor-img {
+      position: absolute;
+      inset: 24px;
+      border-radius: 999px;
+      overflow: hidden;
+      box-shadow: 0 22px 52px rgba(0,0,0,0.25);
+      background: #f8f8f8;
+    }
+
+    .doctor-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .doctor-quote {
+      position: absolute;
+      left: -36px;
+      bottom: -52px;
+      background: #ffffff;
+      padding: 12px 16px;
+      border-radius: 18px;
+      box-shadow: 0 20px 48px rgba(0,0,0,0.25);
+      font-size: 11px;
+      max-width: 280px;
+      z-index: 3;
+    }
+
+    /* calendario de fondo */
+
+    .calendar-card {
+  position: absolute;
+  right: -80px;
+  top: 28px;
+  width: 520px;
+  height: 310px;
+  border-radius: 22px;
+  background: #ffffff;
+  box-shadow: 0 22px 52px rgba(0,0,0,0.16);
+  overflow: hidden;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  font-size: 10px;
+  color: #4b4f66;
+}
+
+/* barra superior con días */
+
+.calendar-inner {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+
+.calendar-header {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  padding: 8px 18px 6px;
+  background: #f8f9fd;
+  border-bottom: 1px solid #e3e5f0;
+  font-weight: 500;
+  font-size: 11px;
+  color: #868ba0;
+}
+
+.calendar-header span {
+  text-align: center;
+}
+
+/* día actual con “pastilla” azul */
+
+.calendar-header .current-day {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: #e3edff;
+  color: #255dff;
+  font-weight: 600;
+}
+
+/* cuerpo con fondo tipo grilla */
+
+.calendar-body {
+  flex: 1;
+  position: relative;
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      #f1f3fb 0,
+      #f1f3fb 1px,
+      transparent 1px,
+      transparent 28px
+    );
+  overflow: hidden;
+}
+
+/* columnas “fantasma” para las líneas verticales */
+
+.calendar-columns {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+}
+
+.calendar-col {
+  border-right: 1px solid #edf0fa;
+}
+
+.calendar-col:last-child {
+  border-right: none;
+}
+
+/* eventos */
+
+.calendar-event {
+  position: absolute;
+  border-radius: 6px;
+  padding: 4px 6px;
+  font-size: 9px;
+  line-height: 1.3;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  box-shadow: 0 3px 7px rgba(0,0,0,0.08);
+}
+
+/* Colores pastel como en la captura */
+
+.event-blue {
+  background: #e5f3ff;
+  border: 1px solid #c3ddff;
+}
+
+.event-green {
+  background: #e5ffe9;
+  border: 1px solid #c0e8c8;
+}
+
+.event-purple {
+  background: #f0e9ff;
+  border: 1px solid #d3c3ff;
+}
+    /* SEGUIMOS CRECIENDO */
+
+    .growth-section {
+      padding-top: 16px;
+      padding-bottom: 72px;
+    }
+
+    .growth-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+      gap: 40px;
+      align-items: flex-start;
+    }
+
+    .growth-title {
+      font-size: 32px;
+      letter-spacing: -0.04em;
+      margin-bottom: 8px;
+    }
+
+    .growth-text {
+      font-size: 15px;
+      color: var(--text-soft);
+    }
+
+    .growth-table {
+      font-size: 14px;
+      border-radius: 16px;
+      overflow: hidden;
+      background: linear-gradient(90deg, rgba(233,255,210,0.9), rgba(227,255,201,0.95));
+      border: 1px solid rgba(0,0,0,0.04);
+    }
+
+    .growth-row {
+      display: grid;
+      grid-template-columns: minmax(0, 2.3fr) minmax(0, 1fr);
+      padding: 12px 18px;
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .growth-row:last-child {
+      border-bottom: none;
+    }
+
+    .growth-row span:last-child {
+      text-align: right;
+      font-weight: 500;
+      font-size: 13px;
+    }
+
+    /* CTA FINAL + FOOTER */
+
+    .cta-section {
+      border-top: 1px solid rgba(0,0,0,0.09);
+      padding-top: 32px;
+      margin-top: 12px;
+    }
+
+    .cta-title {
+      font-size: 22px;
+      margin-bottom: 4px;
+    }
+
+    .cta-text {
+      font-size: 14px;
+      color: var(--text-soft);
+      margin-bottom: 26px;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 26px;
+      font-size: 13px;
+    }
+
+    .footer-heading {
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    /* BOTÓN FLOTANTE WHATSAPP */
+
+    .whatsapp-float {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      width: 56px;
+      height: 56px;
+      border-radius: 999px;
+      background: #25d366;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+      z-index: 60;
+      color: #ffffff;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .whatsapp-float:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 38px rgba(0,0,0,0.3);
+    }
+
+    .whatsapp-float svg {
+      width: 26px;
+      height: 26px;
+      fill: #ffffff;
+    }
+
+    /* RESPONSIVE */
+
+    @media (max-width: 920px) {
       .hero {
-        padding-top: 128px;
-        padding-bottom: 72px;
-        position: relative;
-        text-align: center;
-      }
-      .title {
-        font-size: clamp(32px, 6vw, 56px);
-        line-height: 1.08;
-        font-weight: 800;
-        margin: 0;
-      }
-      .gradient-text {
-        background: linear-gradient(90deg, #fff, #d6bcff 60%, #67e8f9);
-        -webkit-background-clip: text;
-        color: transparent;
-      }
-      .subtitle {
-        color: var(--muted);
-        font-size: 18px;
-        max-width: 680px;
-        margin: 16px auto 0;
-      }
-      .hero-cta {
-        display: flex;
-        gap: 12px;
-        margin-top: 26px;
-        justify-content: center;
-        flex-wrap: wrap;
-      }
-      .hero-cta .btn {
-        margin-bottom: 14px;
+        grid-template-columns: 1fr;
+        gap: 34px;
       }
 
-      /* Sections */
-      section {
-        padding: 80px 0;
-        border-top: 1px solid rgba(255, 255, 255, 0.08);
-        scroll-margin-top: 90px;
-      }
-      .section-head {
-        text-align: center;
-        margin-bottom: 36px;
-      }
-      .h2 {
-        font-size: clamp(26px, 4vw, 40px);
-        margin: 8px 0;
-      }
-      .h2:after {
-        content: "";
-        display: block;
-        height: 3px;
-        width: 80px;
-        margin: 12px auto 0;
-        background: linear-gradient(90deg, var(--secondary), var(--primary));
-        border-radius: 999px;
-        opacity: 0.9;
-      }
-      .lead {
-        color: var(--muted);
-        max-width: 60ch;
-        margin: 0 auto;
+      .hero-title {
+        font-size: 38px;
       }
 
-      .grid-3 {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 26px;
-        margin-top: 42px;
-      }
-      .card {
-        background: var(--card);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 16px;
-        padding: 24px;
-        text-align: center;
-        transition:
-          transform 0.25s,
-          box-shadow 0.25s;
-      }
-      .card:hover {
-        transform: translateY(-6px);
-        box-shadow: 0 16px 46px rgba(0, 0, 0, 0.35);
-      }
-      .icon {
-        font-size: 28px;
-        margin-bottom: 10px;
-      }
-      .muted {
-        color: var(--muted);
+      .services-layout {
+        grid-template-columns: 1fr;
       }
 
-      footer {
-        text-align: center;
-        padding: 70px 20px;
-        border-top: 1px solid rgba(255, 255, 255, 0.08);
-        color: var(--muted);
+      .why-section,
+      .growth-grid,
+      .footer-grid {
+        grid-template-columns: 1fr;
       }
 
-      /* Inputs */
-      .input {
-        width: 100%;
-        padding: 14px 12px;
-        border-radius: 12px;
-        border: 1px solid rgba(255, 255, 255, 0.18);
-        background: rgba(255, 255, 255, 0.05);
-        color: var(--text);
-        transition:
-          border-color 0.2s,
-          box-shadow 0.2s;
-      }
-      .input:focus {
-        border-color: var(--ring);
-        outline: none;
-        box-shadow: 0 0 0 4px var(--ring);
-      }
-
-      /* INTRO FULLSCREEN */
-      .intro {
-        position: fixed;
-        inset: 0;
-        background: radial-gradient(
-            1200px 700px at 80% -10%,
-            rgba(124, 58, 237, 0.18),
-            transparent
-          ),
-          radial-gradient(
-            1200px 700px at 0% 100%,
-            rgba(6, 182, 212, 0.18),
-            transparent
-          ),
-          #070b18;
-        z-index: 100;
-        display: grid;
-        place-items: center;
-        perspective: 900px;
-        will-change: opacity;
-      }
-      .intro-stage {
-        position: relative;
-        width: 100vw;
-        height: 100vh;
-      }
-      #introCanvas {
-        position: absolute;
-        inset: 0;
-        width: 100vw;
-        height: 100vh;
-        display: block;
-        filter: none;
-        outline: none;
-        border: none;
-      }
-      .intro-caption {
-        position: absolute;
-        left: 0;
-        right: 0;
-        bottom: 8%;
-        display: grid;
-        place-items: center;
-        text-align: center;
-        pointer-events: none;
-      }
-      .intro-title {
-        font-size: clamp(28px, 5vw, 44px);
-        margin: 6px 0 0;
-        background: linear-gradient(90deg, #fff, #cbb3ff 60%, #67e8f9);
-        -webkit-background-clip: text;
-        color: transparent;
-        letter-spacing: 0.4px;
-        text-shadow: 0 6px 26px rgba(124, 58, 237, 0.18);
-      }
-      .intro-sub {
-        color: #b7c0d6;
-        margin: 4px 0 0;
-      }
-      .intro.hide {
-        animation: introOut 0.6s ease forwards;
-      }
-      @keyframes introOut {
-        to {
-          opacity: 0;
-          transform: scale(0.98);
-          visibility: hidden;
-        }
-      }
-      .skip-intro {
-        position: absolute;
-        right: 14px;
-        top: 14px;
-        z-index: 110;
-        background: rgba(0, 0, 0, 0.45);
-        color: #fff;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        border-radius: 10px;
-        padding: 8px 10px;
-        font-weight: 600;
-        cursor: pointer;
-      }
-
-      /* Testimonials */
-      .carousel {
-        position: relative;
-        overflow: hidden;
-        padding-top: 12px;
-      }
-      .carousel-track {
-        display: flex;
-        gap: 18px;
-        will-change: transform;
-        scrollbar-width: none;
-      }
-      .carousel-track::-webkit-scrollbar {
+      .calendar-card {
         display: none;
       }
-      .slide {
-        flex: 0 0 auto;
-        min-width: clamp(280px, 32%, 360px);
-        scroll-snap-align: start;
-        text-align: left;
-      }
-      .quote {
-        margin: 0 0 12px 0;
+
+      .header-inner {
+        padding-inline: 16px;
       }
 
-      /* Utility */
-      .sr-only {
-        position: absolute;
-        width: 1px;
-        height: 1px;
-        padding: 0;
-        margin: -1px;
-        overflow: hidden;
-        clip: rect(0, 0, 0, 0);
-        white-space: nowrap;
-        border: 0;
+      .page {
+        padding-inline: 20px;
       }
-    </style>
-  </head>
-  <body>
-    <a class="skip-link" href="#main">Skip to content</a>
+    }
 
-    <!-- Intro animation -->
-    <div class="intro" id="intro" aria-label="Intro animation">
-      <div class="intro-stage">
-        <button class="skip-intro" id="skipIntro" aria-label="Skip intro"
-          >Skip</button
-        >
-        <canvas id="introCanvas" aria-hidden="true"></canvas>
-        <div class="intro-caption" aria-live="polite">
-          <h1 class="intro-title">Solverive</h1>
-          <p class="intro-sub">Helping businesses solve & thrive</p>
-        </div>
-      </div>
+    @media (max-width: 640px) {
+      .nav {
+        display: none;
+      }
+
+      .hero {
+        padding-top: 40px;
+        padding-bottom: 56px;
+      }
+
+      .section-title {
+        font-size: 26px;
+      }
+
+      .growth-title {
+        font-size: 26px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-inner">
+      <div class="logo">Solverive</div>
+      <nav class="nav">
+        <a href="#servicios">Servicios</a>
+        <a href="#precios">Precios</a>
+        <a href="#por-que">Por qué elegirnos</a>
+        <a href="#contacto">Contacto</a>
+      </nav>
     </div>
-    <noscript
-      ><style>
-        .intro {
-          display: none;
-        }
-      </style></noscript
-    >
+  </header>
 
-    <!-- Nav -->
-    <nav class="nav" aria-label="Primary">
-      <div class="nav-inner">
-        <div class="logo" aria-label="Solverive">
-          <!-- SVG del átomo -->
-          <svg
-            class="logo-atom"
-            width="28"
-            height="28"
-            viewBox="0 0 84 84"
-            aria-hidden="true"
-          >
-            <defs>
-              <linearGradient id="lg" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0" stop-color="#06b6d4"></stop>
-                <stop offset="1" stop-color="#7c3aed"></stop>
-              </linearGradient>
-              <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-                <feGaussianBlur stdDeviation="1.5" result="b"></feGaussianBlur>
-                <feMerge>
-                  <feMergeNode in="b"></feMergeNode>
-                  <feMergeNode in="SourceGraphic"></feMergeNode>
-                </feMerge>
-              </filter>
-            </defs>
-            <g filter="url(#glow)">
-              <circle cx="42" cy="42" r="7" fill="url(#lg)"></circle>
-              <g class="orbit">
-                <ellipse
-                  cx="42"
-                  cy="42"
-                  rx="24"
-                  ry="10"
-                  stroke="url(#lg)"
-                  stroke-width="2.5"
-                  opacity=".75"
-                  fill="none"></ellipse>
-              </g>
-              <g class="orbit2">
-                <ellipse
-                  cx="42"
-                  cy="42"
-                  rx="10"
-                  ry="24"
-                  stroke="url(#lg)"
-                  stroke-width="2.5"
-                  opacity=".75"
-                  fill="none"></ellipse>
-              </g>
-              <g class="orbit3">
-                <ellipse
-                  cx="42"
-                  cy="42"
-                  rx="18"
-                  ry="18"
-                  stroke="url(#lg)"
-                  stroke-width="2.5"
-                  opacity=".75"
-                  fill="none"
-                  transform="rotate(45 42 42)"></ellipse>
-              </g>
-              <circle
-                class="electron"
-                cx="66"
-                cy="42"
-                r="2.6"
-                fill="#a78bfa"
-                opacity=".7"></circle>
-            </g>
-          </svg>
-          <span>Solverive</span>
-        </div>
+  <main class="page">
 
-        <!-- Botón hamburguesa (oculto en desktop por CSS) -->
-        <button
-          class="nav-toggle"
-          id="navToggle"
-          aria-label="Open menu"
-          aria-expanded="false"
-          aria-controls="primary-links"
-        >
-          <span class="hamb-line"></span>
-        </button>
+    <!-- HERO -->
+    <section class="hero">
+      <div>
+        <h1 class="hero-title">Simplifica tus reservas y ahorra tiempo cada día</h1>
+        <p class="hero-text">
+          Solverive automatiza la gestión de tus citas para que tu consulta esté siempre organizada.
+          Tus pacientes reservan, confirman y reciben recordatorios sin necesidad de llamadas ni complicaciones.
+        </p>
+        <a href="#contacto" class="hero-primary-btn">Empezar ahora</a>
+      </div>
 
-        <!-- Links con ID para JS -->
-        <div class="nav-links" id="primary-links">
-          <a href="#services">Services</a>
-          <a href="#benefits">Benefits</a>
-          <a href="#testimonials">Testimonials</a>
-          <a href="#contact">Contact</a>
+      <div class="hero-right">
+        <div class="hero-avatar-wrapper">
+          <div class="hero-halo"></div>
+          <div class="hero-avatar-img">
+            <img src="https://images.pexels.com/photos/3760852/pexels-photo-3760852.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Paciente feliz" />
+          </div>
+
+          <div class="hero-badge">
+            <span class="hero-badge-icon">✓</span>
+            <span>Hecho! Nueva cita confirmada</span>
+          </div>
+
+          <div class="hero-bubble">
+            Lía: ¿Puedo cambiar la hora de mi cita?
+          </div>
         </div>
       </div>
-    </nav>
+    </section>
 
-    <!-- Scrim que oscurece/captura clics del fondo al abrir el menú mobile -->
-    <div id="navScrim" class="nav-scrim" hidden></div>
+    <!-- SERVICIOS + PLAN -->
+    <section id="servicios">
+      <h2 class="section-title">Servicios</h2>
 
-    <main id="main">
-      <!-- Hero -->
-      <header class="hero container">
-        <h1 class="title">
-          <span class="gradient-text">Custom AI Chatbots</span> that help you<br />
-          <span class="gradient-text">solve & thrive</span>
-        </h1>
-        <p class="subtitle">
-          Launch in days, not months. We build <strong>domain-tuned chatbots</strong> with your sources (FAQs, docs, CRM),
-          deploy to web/WhatsApp, and track impact from day one.
+      <div class="services-layout">
+        <div></div>
+        <div class="services-list">
+          <article class="service-item">
+            <h3>Reservas automáticas 24/7</h3>
+            <p>Recibe citas incluso cuando estás descansando. Tus pacientes pueden elegir el horario que prefieren y reservar fácilmente desde su teléfono.</p>
+          </article>
+
+          <article class="service-item">
+            <h3>Recordatorios y confirmaciones</h3>
+            <p>Reduce ausencias con recordatorios automáticos por SMS o WhatsApp. Confirmaciones inmediatas para mantener tu agenda siempre al día.</p>
+          </article>
+
+          <article class="service-item">
+            <h3>Reportes y productividad</h3>
+            <p>Visualiza cuántas citas se han reservado, cuántos pacientes nuevos tienes y cuáles son los servicios más solicitados.</p>
+          </article>
+
+          <a href="#contacto" class="services-cta">Me interesa! →</a>
+        </div>
+      </div>
+
+      <!-- PLAN -->
+      <section id="precios" class="plan-card-wrapper">
+        <div class="plan-card">
+          <div class="plan-header">
+            <h3>Un único plan. Todo lo que necesitas.</h3>
+            <p>
+              Empieza con todas las funciones que necesitas para organizar tus citas y ofrecer una mejor atención.
+            </p>
+          </div>
+
+          <div class="plan-price">€XX</div>
+          <div class="plan-period">/ mes</div>
+
+          <div class="plan-content">
+            <ul class="plan-features">
+              <li>Reservas automáticas por WhatsApp</li>
+              <li>Confirmaciones y recordatorios automáticos</li>
+              <li>Reportes mensuales</li>
+              <li>Soporte personalizado</li>
+            </ul>
+
+            <button class="plan-button">Quiero probarlo</button>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <!-- POR QUÉ ELEGIRNOS -->
+    <section id="por-que" class="why-section">
+      <div>
+        <h2 class="why-title">Por qué elegirnos?</h2>
+        <p class="why-text">
+          Porque tu tiempo es valioso. Solverive te ayuda a organizar tus citas, reducir llamadas y ofrecer una experiencia
+          más cómoda y profesional a tus pacientes.
         </p>
-        <div class="hero-cta">
-          <a href="#contact" class="btn" aria-label="Get started with Solverive"
-            >Get Started</a
-          >
-          <a href="#services" class="btn btn-outline">See How</a>
-        </div>
-      </header>
+        <p style="font-size:14px; margin-bottom:4px;"><strong>Beneficios:</strong></p>
+        <ul class="why-benefits">
+          <li>Reservas online disponibles las 24 horas.</li>
+          <li>Confirmaciones y recordatorios automáticos.</li>
+          <li>Lista de espera para aprovechar cancelaciones.</li>
+          <li>Menos tareas administrativas, más eficiencia.</li>
+          <li>Reportes claros para mejorar tu gestión.</li>
+          <li>Una mejor experiencia para tus pacientes.</li>
+        </ul>
+      </div>
 
-      <!-- Services -->
-      <section id="services" class="container" aria-labelledby="services-title">
-        <div class="section-head">
-          <h2 id="services-title" class="h2">Our Services</h2>
-          <p class="lead">
-            AI that works for your business — fast setup, accessible pricing, measurable outcomes.
-          </p>
-        </div>
-        <div class="grid-3">
-          <div class="card" aria-label="Custom Chatbots">
-            <div class="icon">💬</div>
-            <h3>Custom Chatbots</h3>
-            <p class="muted">
-              Brand-voice chatbots using your knowledge base (RAG) with sources cited. Deploy on web, app or WhatsApp.
-            </p>
+      <div class="why-right">
+        <div class="doctor-wrapper">
+          <div class="doctor-halo"></div>
+          <div class="doctor-img">
+            <img src="https://images.pexels.com/photos/3714743/pexels-photo-3714743.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Doctora" />
           </div>
-          <div class="card" aria-label="Automation">
-            <div class="icon">⚙️</div>
-            <h3>AI Automation</h3>
-            <p class="muted">
-              Automate tier-1 support, bookings, lead capture and follow-ups. Connect to Zapier/Make and your stack.
-            </p>
-          </div>
-          <div class="card" aria-label="Advisory">
-            <div class="icon">🤝</div>
-            <h3>Advisory</h3>
-            <p class="muted">
-              Roadmaps and governance to adopt AI safely. We define KPIs so your team sees value quickly.
-            </p>
+          <div class="doctor-quote">
+            “Antes perdía horas coordinando citas por mensajes. Ahora todo se gestiona solo, y mis pacientes lo agradecen.”
+            – Dra. Alejandra Ríos, Dermatología
           </div>
         </div>
-        <div style="text-align:center;margin-top:28px">
-          <a href="#contact" class="btn">Start Your Free Demo</a>
-        </div>
-      </section>
 
-      <!-- Benefits -->
-      <section id="benefits" class="container" aria-labelledby="benefits-title">
-        <div class="section-head">
-          <h2 id="benefits-title" class="h2">Why Choose Solverive</h2>
-          <p class="lead">
-            We focus on outcomes: speed to value, cost efficiency and real growth.
-          </p>
-        </div>
-        <div class="grid-3">
-          <div class="card">
-            <h3>🚀 Fast Deployment</h3>
-            <p class="muted">
-              MVP chatbot live in <strong>72h</strong> so you capture value right away.
-            </p>
-          </div>
-          <div class="card">
-            <h3>📉 Lower Support Load</h3>
-            <p class="muted">
-              Customers typically see <strong>~40% fewer tickets</strong> for repetitive questions.
-            </p>
-          </div>
-          <div class="card">
-            <h3>📈 More Conversions</h3>
-            <p class="muted">
-              Capture and qualify leads 24/7 with guided flows and handoff to human when needed.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <!-- Testimonials -->
-      <section
-        id="testimonials"
-        class="container"
-        aria-labelledby="testimonials-title"
-      >
-        <div class="section-head">
-          <h2 id="testimonials-title" class="h2">What Our Clients Say</h2>
-        </div>
-        <div class="carousel" aria-label="Testimonials carousel">
-          <div class="carousel-track" id="carousel">
-            <article class="slide card">
-              <p class="quote">
-                “Solverive handled <strong>80% of WhatsApp reservations</strong> in our first week.”
-              </p>
-              <div class="muted">— Restaurant Owner</div>
-            </article>
-            <article class="slide card">
-              <p class="quote">
-                “Patients get instant answers. Booking is faster and our staff load
-                <strong>dropped significantly</strong>.”
-              </p>
-              <div class="muted">— Clinic Manager</div>
-            </article>
-            <article class="slide card">
-              <p class="quote">
-                “Support tickets were <strong>cut in half</strong>. The bot resolves FAQs and drives sales 24/7.”
-              </p>
-              <div class="muted">— E-commerce Director</div>
-            </article>
-            <article class="slide card">
-              <p class="quote">
-                “As an agency, we resell Solverive bots to our clients — <strong>fast delivery</strong>, zero dev.”
-              </p>
-              <div class="muted">— Marketing Agency Owner</div>
-            </article>
-            <article class="slide card">
-              <p class="quote">
-                “Clear roadmap and quick wins. Our team adopted the tools in days.”
-              </p>
-              <div class="muted">— Operations Director</div>
-            </article>
-            <article class="slide card">
-              <p class="quote">
-                “They integrated with our stack seamlessly. Zero friction.”
-              </p>
-              <div class="muted">— CTO, Startup</div>
-            </article>
-          </div>
-        </div>
-        <div style="text-align:center;margin-top:28px">
-          <a href="#contact" class="btn">Book a Demo</a>
-        </div>
-      </section>
-
-      <!-- Contact -->
-      <section id="contact" class="container" aria-labelledby="contact-title">
-        <div class="section-head">
-          <h2 id="contact-title" class="h2">Let’s Work Together</h2>
-          <p class="lead">
-            Ready to start with AI? Contact us today — we’ll guide you step by step.
-          </p>
-        </div>
-        <div class="container-edge-safe" style="max-width:640px;margin:0 auto">
-          <form
-            name="contact"
-            method="POST"
-            data-netlify="true"
-            netlify-honeypot="bot-field"
-            class="card"
-          >
-            <input type="hidden" name="form-name" value="contact" />
-            <p class="hidden" style="display:none">
-              <label
-                >Don’t fill this out if you’re human: <input
-                  name="bot-field"
-                /></label
-              >
-            </p>
-            <div style="display:grid;gap:14px">
-              <label>
-                <span class="sr-only">Your name</span>
-                <input
-                  name="name"
-                  required
-                  placeholder="Your name"
-                  class="input"
-                  autocomplete="name"
-                />
-              </label>
-              <label>
-                <span class="sr-only">Your email</span>
-                <input
-                  type="email"
-                  name="email"
-                  required
-                  placeholder="Your email"
-                  class="input"
-                  autocomplete="email"
-                />
-              </label>
-              <label>
-                <span class="sr-only">Message</span>
-                <textarea
-                  name="message"
-                  rows="4"
-                  placeholder="Tell us about your needs"
-                  class="input"></textarea>
-              </label>
-              <button class="btn" style="justify-content:center">Send</button>
+        <div class="calendar-card">
+          <div class="calendar-inner">
+            <div class="calendar-header">
+              <span class="current-day">Lun 5</span>
+              <span>Mar 6</span>
+              <span>Mié 7</span>
+              <span>Jue 8</span>
+              <span>Vie 9</span>
             </div>
-          </form>
-          <div style="text-align:center;margin-top:18px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
-            <!-- Reemplaza XXXXXXXXXXX por tu número en formato internacional -->
-            <a class="btn-outline" href="https://wa.me/5491165344775" aria-label="Chat on WhatsApp">Chat on WhatsApp</a>
-            <a class="btn-outline" href="#services">Explore Services</a>
+        
+            <div class="calendar-body">
+              <!-- columnas de fondo -->
+              <div class="calendar-columns">
+                <div class="calendar-col"></div>
+                <div class="calendar-col"></div>
+                <div class="calendar-col"></div>
+                <div class="calendar-col"></div>
+                <div class="calendar-col"></div>
+              </div>
+        
+              <!-- eventos (posición en % para simular celdas) -->
+              <!-- columna 1 (Lun) -->
+              <div class="calendar-event event-blue"
+                   style="left:4%; width:16%; top:14px; height:42px;">
+                Ana Suárez · 09:00
+              </div>
+              <div class="calendar-event event-green"
+                   style="left:4%; width:16%; top:72px; height:40px;">
+                Paciente nuevo
+              </div>
+        
+              <!-- columna 2 (Mar) -->
+              <div class="calendar-event event-blue"
+                   style="left:24%; width:16%; top:24px; height:40px;">
+                Rodrigo Sosa · 10:15
+              </div>
+              <div class="calendar-event event-purple"
+                   style="left:24%; width:16%; top:90px; height:34px;">
+                Pilar San Martín
+              </div>
+        
+              <!-- columna 3 (Mié) -->
+              <div class="calendar-event event-green"
+                   style="left:44%; width:16%; top:32px; height:48px;">
+                Diego Muñoz · 11:30
+              </div>
+        
+              <!-- columna 4 (Jue) -->
+              <div class="calendar-event event-blue"
+                   style="left:64%; width:16%; top:18px; height:42px;">
+                Asunción Correa
+              </div>
+              <div class="calendar-event event-purple"
+                   style="left:64%; width:16%; top:86px; height:40px;">
+                Gabriel Valenzuela
+              </div>
+        
+              <!-- columna 5 (Vie) -->
+              <div class="calendar-event event-green"
+                   style="left:84%; width:16%; top:52px; height:46px;">
+                Ana Díaz · 12:00
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SEGUIMOS CRECIENDO -->
+    <section class="growth-section">
+      <div class="growth-grid">
+        <div>
+          <h2 class="growth-title">Seguimos creciendo para ti</h2>
+          <p class="growth-text">
+            Nuestro compromiso es acompañarte en el crecimiento de tu consulta.
+            Estas son las próximas herramientas que estamos desarrollando para ayudarte a conseguir más pacientes y ofrecer
+            una experiencia aún más completa.
+          </p>
+        </div>
+
+        <div class="growth-table">
+          <div class="growth-row">
+            <span>Gestión de citas y recordatorios mejorada</span>
+            <span>Muy pronto!</span>
+          </div>
+          <div class="growth-row">
+            <span>Reportes avanzados y estadísticas de rendimiento</span>
+            <span>Muy pronto!</span>
+          </div>
+          <div class="growth-row">
+            <span>Perfil profesional y reseñas en línea</span>
+            <span>Muy pronto!</span>
+          </div>
+          <div class="growth-row">
+            <span>Herramientas de marketing para atraer más pacientes</span>
+            <span>Muy pronto!</span>
+          </div>
+          <div class="growth-row">
+            <span>Creación de páginas web y landing pages para tu consulta</span>
+            <span>Muy pronto!</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- CTA + FOOTER -->
+      <section id="contacto" class="cta-section">
+        <h3 class="cta-title">Empezá hoy a optimizar tu consulta</h3>
+        <p class="cta-text">
+          Contáctanos y te acompañamos paso a paso para que empieces a ahorrar tiempo desde el primer día.
+        </p>
+
+        <div class="footer-grid">
+          <div>
+            <div class="footer-heading">Oficinas</div>
+            <p>Av. Paral·lel 170<br />Barcelona, España</p>
+            <p>Laprida 1072<br />Buenos Aires, Argentina</p>
+          </div>
+
+          <div>
+            <div class="footer-heading">Contacto</div>
+            <p>+34 632 151 169</p>
+            <p>hello@solverive.com</p>
+          </div>
+
+          <div>
+            <div class="footer-heading">Social</div>
+            <p>LinkedIn</p>
+            <p>Xxxx</p>
           </div>
         </div>
       </section>
+    </section>
 
-      <ChatWidget client:idle />
-    </main>
+  </main>
 
-    <footer>
-      <p>© <span id="year"></span> Solverive — Helping businesses solve & thrive.</p>
-    </footer>
+  <!-- BOTÓN FLOTANTE WHATSAPP -->
+  <a
+    href="https://wa.me/5491124690000?text=Hola%20me%20gustar%C3%ADa%20recibir%20m%C3%A1s%20informaci%C3%B3n%20sobre%20Solverive"
+    class="whatsapp-float"
+    target="_blank"
+    rel="noopener"
+    aria-label="Escribir por WhatsApp"
+  >
+    <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+      <path d="M16 3C9.4 3 4 8.1 4 14.3c0 2.5.8 4.8 2.3 6.7L4 29l8-2.1c1.3.4 2.7.6 4 .6 6.6 0 12-5.1 12-11.3C28 8.1 22.6 3 16 3zm0 20.3c-1.2 0-2.4-.3-3.5-.7l-.3-.1-4.7 1.2 1.3-4.4-.2-.3c-1.3-1.6-2-3.5-2-5.6C6.7 9 10 6 16 6c4.9 0 9.3 3.6 9.3 8.2 0 4.6-4.4 8.1-9.3 8.1zm5-6.1c-.3-.1-1.8-.9-2.1-1-.3-.1-.5-.1-.7.1-.2.3-.8 1-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.1-.4-2-1.3-.7-.7-1.2-1.6-1.3-1.9-.1-.3 0-.4.1-.5.1-.1.3-.3.4-.5.1-.2.2-.3.3-.5.1-.2.1-.3 0-.5-.1-.1-.7-1.7-.9-2.3-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.7.3-.2.3-1 1-1 2.5s1 2.9 1.1 3.1c.1.2 2 3.3 4.8 4.5.7.3 1.3.6 2 .7.8.3 1.5.2 2.1.1.6-.1 1.8-.7 2.1-1.3.3-.6.3-1.1.2-1.3-.1-.2-.3-.2-.6-.3z"/>
+    </svg>
+  </a>
 
-    <!-- Structured data -->
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "Organization",
-        "name": "Solverive",
-        "url": "https://solverive.com",
-        "logo": "https://solverive.com/logo.png",
-        "sameAs": []
-      }
-    </script>
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "WebSite",
-        "name": "Solverive",
-        "url": "https://solverive.com",
-        "potentialAction": {
-          "@type": "SearchAction",
-          "target": "https://solverive.com/?q={search_term_string}",
-          "query-input": "required name=search_term_string"
-        }
-      }
-    </script>
-
-    <script is:inline>
-      (function () {
-        const nav = document.querySelector(".nav");
-        const toggle = document.getElementById("navToggle");
-        const linksBox = document.getElementById("primary-links");
-        const scrim = document.getElementById("navScrim");
-        if (!nav || !toggle || !linksBox) return;
-
-        const mq = window.matchMedia("(max-width: 768px)");
-
-        function openMenu() {
-          if (!mq.matches) return; // <-- sólo en mobile
-          nav.classList.add("is-open");
-          toggle.setAttribute("aria-expanded", "true");
-          const firstLink = linksBox.querySelector("a");
-          firstLink && firstLink.focus({ preventScroll: true });
-          scrim.hidden = false;
-          document.addEventListener("keydown", escToClose);
-          scrim.addEventListener("click", closeMenu, { capture: true });
-        }
-        function closeMenu() {
-          nav.classList.remove("is-open");
-          toggle.setAttribute("aria-expanded", "false");
-          scrim.hidden = true;
-          document.removeEventListener("keydown", escToClose);
-          scrim.removeEventListener("click", closeMenu, { capture: true });
-        }
-        function escToClose(e) {
-          if (e.key === "Escape") closeMenu();
-        }
-
-        toggle.addEventListener("click", () => {
-          if (!mq.matches) return; // <-- ignora clicks en desktop
-          nav.classList.contains("is-open") ? closeMenu() : openMenu();
-        });
-
-        linksBox.addEventListener("click", (e) => {
-          if (mq.matches && e.target.closest("a")) closeMenu();
-        });
-
-        // Si se pasa a desktop, asegúrate de cerrar
-        function syncMode() {
-          if (!mq.matches) closeMenu();
-        }
-        mq.addEventListener?.("change", syncMode);
-        window.addEventListener("resize", syncMode);
-      })();
-
-      // Year
-      document.getElementById("year").textContent = new Date().getFullYear();
-
-      // ---- Testimonials carousel (auto cuando es visible) ----
-      (function () {
-        const track = document.getElementById("carousel");
-        if (!track) return;
-        const originals = Array.from(track.children);
-        originals.forEach((s) => track.appendChild(s.cloneNode(true))); // loop
-        let index = 0,
-          timer,
-          active = false;
-        const intervalMs = 3000,
-          transitionMs = 600;
-        const gap = () => parseFloat(getComputedStyle(track).gap) || 0;
-        const step = () =>
-          track.children[0].getBoundingClientRect().width + gap();
-        function goTo(i, animate = true) {
-          track.style.transition = animate
-            ? `transform ${transitionMs}ms ease`
-            : "none";
-          track.style.transform = `translateX(${-i * step()}px)`;
-        }
-        function next() {
-          if (!active) return;
-          index++;
-          goTo(index, true);
-          if (index >= originals.length) {
-            setTimeout(() => {
-              index = 0;
-              goTo(index, false);
-            }, transitionMs + 20);
-          }
-        }
-        const start = () => {
-          if (!active) {
-            active = true;
-            timer = setInterval(next, intervalMs);
-          }
-        };
-        const stop = () => {
-          active = false;
-          clearInterval(timer);
-        };
-        track.addEventListener("mouseenter", stop);
-        track.addEventListener("mouseleave", start);
-        track.addEventListener("touchstart", stop, { passive: true });
-        track.addEventListener("touchend", start);
-
-        const obs = new IntersectionObserver(
-          (entries) => {
-            entries.forEach((e) => {
-              if (e.isIntersecting) start();
-              else stop();
-            });
-          },
-          { threshold: 0.2 }
-        );
-        obs.observe(track);
-
-        window.addEventListener("resize", () => goTo(index, false));
-        goTo(0, false);
-
-        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-          stop();
-          track.style.transition = "none";
-          track.style.transform = "none";
-        }
-      })();
-
-      // ---- Intro FULLSCREEN Big Bang con "Skip" ----
-      (function () {
-        const overlay = document.getElementById("intro");
-        const skipBtn = document.getElementById("skipIntro");
-        const canvas = document.getElementById("introCanvas");
-        if (!canvas || !overlay) return;
-        const ctx = canvas.getContext("2d");
-
-        function resizeCanvas() {
-          const dpr = Math.max(1, window.devicePixelRatio || 1);
-          const cssW = window.innerWidth,
-            cssH = window.innerHeight;
-          canvas.width = Math.floor(cssW * dpr);
-          canvas.height = Math.floor(cssH * dpr);
-          canvas.style.width = "100vw";
-          canvas.style.height = "100vh";
-          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        }
-        resizeCanvas();
-        window.addEventListener("resize", resizeCanvas);
-
-        let t = 0;
-        const fov = 420;
-        let phase = "galaxy";
-        const galaxyDuration = 900,
-          expandDuration = 900,
-          fadeDuration = 600;
-        let phaseStart = performance.now();
-        let canceled = false;
-
-        const parts = [];
-        for (let i = 0; i < 220; i++) {
-          const radius = 40 + Math.random() * 210,
-            angle = Math.random() * Math.PI * 2,
-            height = (Math.random() - 0.5) * 70;
-          parts.push({
-            x: Math.cos(angle) * radius,
-            y: height,
-            z: Math.sin(angle) * radius,
-            hue: i % 2 ? 200 : 280,
-            alpha: 0.6 + 0.25 * Math.random(),
-          });
-        }
-
-        function size() {
-          const W = canvas.clientWidth,
-            H = canvas.clientHeight;
-          return { W, H, cx: W / 2, cy: H / 2 };
-        }
-        const project = (p, s) => {
-          const z = p.z + 300,
-            sc = fov / (fov + z);
-          return { x: s.cx + p.x * sc, y: s.cy + p.y * sc, s: sc };
-        };
-        const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
-
-        function drawGalaxy(s) {
-          ctx.fillStyle = "rgba(7,11,24,.45)";
-          ctx.fillRect(0, 0, s.W, s.H);
-          ctx.save();
-          ctx.strokeStyle = "rgba(167,139,250,.14)";
-          ctx.lineWidth = 1;
-          ctx.beginPath();
-          for (let a = 0; a < Math.PI * 2; a += 0.025) {
-            const q = project(
-              {
-                x: Math.cos(a) * 160,
-                y: Math.sin(a) * 40,
-                z: Math.sin(a) * 160,
-              },
-              s
-            );
-            if (a === 0) ctx.moveTo(q.x, q.y);
-            else ctx.lineTo(q.x, q.y);
-          }
-          ctx.stroke();
-          ctx.restore();
-          const n = project({ x: 0, y: 0, z: 0 }, s);
-          const g = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, 26);
-          g.addColorStop(0, "rgba(255,255,255,.9)");
-          g.addColorStop(1, "rgba(124,58,237,.1)");
-          ctx.fillStyle = g;
-          ctx.beginPath();
-          ctx.arc(
-            n.x,
-            n.y,
-            10 * n.s + 1.2 * Math.sin(t * 0.12),
-            0,
-            Math.PI * 2
-          );
-          ctx.fill();
-          ctx.globalCompositeOperation = "lighter";
-          for (const p of parts) {
-            const ang = Math.atan2(p.z, p.x) + 0.006,
-              r = Math.hypot(p.x, p.z);
-            p.x = Math.cos(ang) * r;
-            p.z = Math.sin(ang) * r;
-            p.y += Math.sin(t * 0.01 + p.x * 0.01) * 0.04;
-            const q = project(p, s);
-            const rr = 1 * q.s * 2;
-            ctx.beginPath();
-            ctx.fillStyle = `hsla(${p.hue},80%,70%,${p.alpha})`;
-            ctx.shadowBlur = 10;
-            ctx.shadowColor = "rgba(124,58,237,.45)";
-            ctx.arc(q.x, q.y, rr, 0, Math.PI * 2);
-            ctx.fill();
-          }
-          ctx.globalCompositeOperation = "source-over";
-          ctx.shadowBlur = 0;
-          return n;
-        }
-
-        function drawBang(center, s, progress) {
-          ctx.fillStyle = "#070b18";
-          ctx.fillRect(0, 0, s.W, s.H);
-          const maxR = Math.hypot(s.W, s.H),
-            r = 8 + easeOutCubic(progress) * maxR;
-          const g = ctx.createRadialGradient(
-            center.x,
-            center.y,
-            0,
-            center.x,
-            center.y,
-            Math.max(1, r)
-          );
-          g.addColorStop(0, "rgba(255,255,255,0.95)");
-          g.addColorStop(0.22, "rgba(199,167,255,0.70)");
-          g.addColorStop(0.55, "rgba(124,58,237,0.35)");
-          g.addColorStop(1, "rgba(124,58,237,0.0)");
-          ctx.fillStyle = g;
-          ctx.beginPath();
-          ctx.rect(0, 0, s.W, s.H);
-          ctx.fill();
-        }
-
-        function endIntro() {
-          canceled = true;
-          overlay.classList.add("hide");
-          setTimeout(() => overlay.remove(), 650);
-        }
-        skipBtn.addEventListener("click", endIntro);
-        overlay.addEventListener("click", endIntro);
-
-        function loop(now) {
-          if (canceled) return;
-          const s = size();
-          const elapsed = now - phaseStart;
-
-          if (phase === "galaxy") {
-            const nucleus = drawGalaxy(s);
-            t++;
-            if (elapsed >= galaxyDuration) {
-              phase = "bang";
-              phaseStart = now;
-              loop.nucleus = nucleus;
-            }
-            requestAnimationFrame(loop);
-            return;
-          }
-          if (phase === "bang") {
-            const prog = Math.min(1, elapsed / expandDuration);
-            drawBang(loop.nucleus || { x: s.cx, y: s.cy }, s, prog);
-            if (prog < 1) {
-              requestAnimationFrame(loop);
-            } else {
-              phase = "fade";
-              phaseStart = now;
-              requestAnimationFrame(loop);
-            }
-            return;
-          }
-          if (phase === "fade") {
-            const prog = Math.min(1, elapsed / fadeDuration);
-            overlay.style.opacity = String(1 - prog);
-            if (prog < 1) {
-              requestAnimationFrame(loop);
-            } else {
-              endIntro();
-            }
-          }
-        }
-
-        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-          endIntro();
-          return;
-        }
-        requestAnimationFrame(loop);
-      })();
-
-      // Recordatorio: en Cloudflare → SSL/TLS: "Always Use HTTPS" y modo "Full".
-    </script>
-  </body>
+</body>
 </html>
